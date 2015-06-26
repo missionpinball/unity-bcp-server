@@ -18,6 +18,11 @@ using System.Net;
 public class BcpServer : MonoBehaviour
 {
     /// <summary>
+    /// The BCP Server version
+    /// </summary>
+    public const string BCP_SERVER_VERSION = "1.00";
+
+    /// <summary>
     /// The TCP listener.
     /// </summary>
     private TcpListener _listener;
@@ -91,6 +96,7 @@ public class BcpServer : MonoBehaviour
 	public void Init(int port)
     {
         BcpLogger.Trace("BcpServer: Initializing");
+        BcpLogger.Trace("BcpServer: Version " + BCP_SERVER_VERSION);
 
         // Create TCP/IP socket
         _listeningForClient = true;
