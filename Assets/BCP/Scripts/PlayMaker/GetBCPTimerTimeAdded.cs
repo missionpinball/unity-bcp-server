@@ -4,11 +4,11 @@ using HutongGames.PlayMaker;
 using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 
 /// <summary>
-/// Custom PlayMaker action for MPF that sends an Event when an MPF 'timer' started command is received.
+/// Custom PlayMaker action for MPF that sends an Event when an MPF 'timer' time_added command is received.
 /// </summary>
-[ActionCategory("MPF")]
-[Tooltip("Sends an Event when an MPF 'timer' started command is received.")]
-public class GetMPFTimerStarted : FsmStateAction
+[ActionCategory("BCP")]
+[Tooltip("Sends an Event when an MPF 'timer' time_added command is received.")]
+public class GetBCPTimerTimeAdded : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
@@ -21,7 +21,11 @@ public class GetMPFTimerStarted : FsmStateAction
     public FsmInt ticks;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The PlayMaker event to send when an MPF 'timer' started command is received")]
+    [Tooltip("The variable to receive the timer ticks added value")]
+    public FsmInt ticksAdded;
+
+    [UIHint(UIHint.Variable)]
+    [Tooltip("The PlayMaker event to send when an MPF 'timer' time_added command is received")]
     public FsmEvent sendEvent;
 
     /// <summary>
@@ -31,6 +35,7 @@ public class GetMPFTimerStarted : FsmStateAction
     {
         timerName = null;
         ticks = null;
+        ticksAdded = null;
         sendEvent = null;
     }
 
@@ -60,9 +65,18 @@ public class GetMPFTimerStarted : FsmStateAction
     public void Timer(object sender, TimerMessageEventArgs e)
     {
         // Determine if this timer message is the one we are interested in.  If so, send specified FSM event.
-        if (!String.IsNullOrEmpty(timerName) && e.Name == timerName && e.Action == "started")
+        if (!String.IsNullOrEmpty(timerName) && e.Name == timerName && e.Action == "time_added")
         {
             ticks.Value = e.Ticks;
+            
+            // Attempt to retrieve the "ticks_added" parameter and store it in a FSM variable
+            if (!ticksAdded.IsNone && !String.IsNullOrEmpty(e.BcpMessage.Parameters["ticks_added"]))
+            {
+                int added;
+                if (int.TryParse(e.BcpMessage.Parameters["ticks_added"], out added))
+                    ticksAdded.Value = added;
+            }
+
             Fsm.Event(sendEvent);
         }
     }

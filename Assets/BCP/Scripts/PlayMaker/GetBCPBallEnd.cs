@@ -6,9 +6,9 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// <summary>
 /// Custom PlayMaker action for MPF that sends an Event when an MPF 'ball_end' command is received.
 /// </summary>
-[ActionCategory("MPF")]
+[ActionCategory("BCP")]
 [Tooltip("Sends an Event when an MPF 'ball_end' command is received.")]
-public class GetMPFBallEnd : FsmStateAction
+public class GetBCPBallEnd : FsmStateAction
 {
     [UIHint(UIHint.Variable)]
     [Tooltip("The PlayMaker event to send when an MPF 'ball_end' command is received")]

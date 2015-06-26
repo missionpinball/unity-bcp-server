@@ -6,9 +6,9 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// <summary>
 /// Custom PlayMaker action for MPF that sends an Event when an MPF 'mode_stop' command is received.
 /// </summary>
-[ActionCategory("MPF")]
+[ActionCategory("BCP")]
 [Tooltip("Sends an Event when an MPF 'mode_stop' command is received.")]
-public class GetMPFModeStop : FsmStateAction
+public class GetBCPModeStop : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]

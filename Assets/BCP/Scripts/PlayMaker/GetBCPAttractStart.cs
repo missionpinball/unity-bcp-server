@@ -6,9 +6,9 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// <summary>
 /// Custom PlayMaker action for MPF that sends an Event when an MPF 'attract_start' command is received.
 /// </summary>
-[ActionCategory("MPF")]
+[ActionCategory("BCP")]
 [Tooltip("Sends an Event when an MPF 'attract_start' command is received.")]
-public class GetMPFAttractStart : FsmStateAction
+public class GetBCPAttractStart : FsmStateAction
 {
     [UIHint(UIHint.Variable)]
     [Tooltip("The PlayMaker event to send when an MPF 'attract_start' command is received")]

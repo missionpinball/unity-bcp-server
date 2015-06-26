@@ -9,7 +9,7 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// <summary>
 /// Custom PlayMaker action for MPF that shuts down the BCP server and quits the Unity application.
 /// </summary>
-[ActionCategory("MPF")]
+[ActionCategory("BCP")]
 [Tooltip("Shuts down the BCP server and quits the Unity application.")]
 public class ShutdownBCPServer : FsmStateAction
 {

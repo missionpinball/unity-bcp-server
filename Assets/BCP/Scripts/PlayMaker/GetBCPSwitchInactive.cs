@@ -6,9 +6,9 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// <summary>
 /// Custom PlayMaker action for MPF that sends an Event when an MPF 'switch' command is received.
 /// </summary>
-[ActionCategory("MPF")]
+[ActionCategory("BCP")]
 [Tooltip("Sends an Event when an MPF 'switch' inactive command is received.")]
-public class GetMPFSwitchInactive : FsmStateAction
+public class GetBCPSwitchInactive : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]

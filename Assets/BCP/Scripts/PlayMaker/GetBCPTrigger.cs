@@ -4,19 +4,19 @@ using HutongGames.PlayMaker;
 using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 
 /// <summary>
-/// Custom PlayMaker action for MPF that sends an Event when an MPF Trigger command is received.
+/// Custom PlayMaker action for MPF that sends an Event when an BCP Trigger command is received.
 /// </summary>
-[ActionCategory("MPF")]
-[Tooltip("Sends an Event when an MPF Trigger command is received.")]
-public class GetMPFTrigger : FsmStateAction
+[ActionCategory("BCP")]
+[Tooltip("Sends an Event when an BCP Trigger command is received.")]
+public class GetBCPTrigger : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The name of the MPF trigger to listen for")]
+    [Tooltip("The name of the BCP Trigger to listen for")]
     public string triggerName;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The PlayMaker event to send when the specified MPF trigger is received")]
+    [Tooltip("The PlayMaker event to send when the specified BCP Trigger is received")]
     public FsmEvent sendEvent;
 
     /// <summary>
