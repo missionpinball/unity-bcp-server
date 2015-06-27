@@ -12,17 +12,49 @@ using System.Text.RegularExpressions;
 
 /// <summary>
 /// A singleton class (only one instance) to manage sending and receiving of BCP messages between 
-/// Mission Pinball Framework (MPF) pin controller and the Media Controller (MC) server.
+/// a pinball controller (PC) and the media controller (MC) server.
 /// </summary>
 /// <remarks>
 /// The <see cref="BcpMessageManager"/> uses events to notify when specific messages are received.  Event handlers
-/// can be added to these events.
+/// can be added to these events.  The BCP Server events and delegates follow the standard convention used in Microsoft
+/// .NET where the delegate method's first parameter is of type <see cref="Object"/> and refers to the instance that 
+/// raises the event. Its second parameter is derived from type <see cref="EventArgs"/> (in this case <see cref="BcpMessageEventArgs"/>)
+/// and holds the event data.
 /// </remarks>
+/// <example>
+/// The following is a Unity script C# example that establishes an event handler for 'mode_start' BCP commands.
+/// <code>
+/// using UnityEngine;
+/// 
+/// public class ModeManager : MonoBehaviour
+/// {
+///     // Called just after the Unity object is enabled. This happens when a MonoBehaviour instance is created.
+///     void OnEnbale()
+///     {
+///         // Adds an 'OnModeStart' event handler
+///         BcpMessageManager.OnModeStart += ModeStarted;
+///     }
+/// 
+///     // Called when the Unity object becomes disabled or inactive
+///     void OnDisable()
+///     {
+///         // Removes an 'OnModeStart' event handler
+///         BcpMessageManager.OnModeStart -= ModeStarted;
+///     }
+/// 
+///     // OnModeStart event handler function
+///     public void ModeStarted(object sender, ModeStartMessageEventArgs e)
+///     {
+///         // Put mode start code here
+///         string modeName = e.Name;
+///     }
+/// }
+/// </code>
+/// </example>
 public class BcpMessageManager : MonoBehaviour 
 {
-
     /// <summary>
-    /// The BCP Message Protocol version implemented.
+    /// The BCP Message Protocol version implemented by the BCP Server.
     /// </summary>
 	public const string BCP_VERSION = "1.0";
 
@@ -39,23 +71,117 @@ public class BcpMessageManager : MonoBehaviour
     public int messageQueueSize = 100;
 
 
+    #region Event Handling Delegates
     // Event handling delegates
+
+    /// <summary>
+    /// Represents the method that will handle a BCP message event that has default BCP message parameters.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BcpMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void BcpMessageEventHandler(object sender, BcpMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'hello' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="HelloMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void HelloMessageEventHandler(object sender, HelloMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'ball_start' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BallStartMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void BallStartMessageEventHandler(object sender, BallStartMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'error' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ErrorMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void ErrorMessageEventHandler(object sender, ErrorMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'mode_start' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ModeStartMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void ModeStartMessageEventHandler(object sender, ModeStartMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'mode_stop' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ModeStopMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void ModeStopMessageEventHandler(object sender, ModeStopMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'player_score' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerScoreMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void PlayerScoreMessageEventHandler(object sender, PlayerScoreMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'player_added' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerAddedMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void PlayerAddedMessageEventHandler(object sender, PlayerAddedMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'player_turn_start' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerTurnStartMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void PlayerTurnStartMessageEventHandler(object sender, PlayerTurnStartMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'player_variable' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerVariableMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void PlayerVariableMessageEventHandler(object sender, PlayerVariableMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'switch' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="SwitchMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void SwitchMessageEventHandler(object sender, SwitchMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'trigger' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="TriggerMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void TriggerMessageEventHandler(object sender, TriggerMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'reset' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ResetMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void ResetMessageEventHandler(object sender, ResetMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'config' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BcpMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void ConfigMessageEventHandler(object sender, BcpMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'timer' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="TimerMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void TimerMessageEventHandler(object sender, TimerMessageEventArgs e);
 
+    #endregion
+
+    #region Events
     // Event handling events
     /// <summary>
     /// Occurs when a BCP message is received.
@@ -106,7 +232,7 @@ public class BcpMessageManager : MonoBehaviour
     public static event BcpMessageEventHandler OnGameEnd;
 
     /// <summary>
-    /// Occurs when an "error" BCP message is received.  Indicates that a recent BCP message sent to MPF triggered an error.
+    /// Occurs when an "error" BCP message is received.  Indicates that a recent BCP message sent to BCP Triggered an error.
     /// </summary>
     public static event ErrorMessageEventHandler OnError;
 
@@ -200,9 +326,12 @@ public class BcpMessageManager : MonoBehaviour
     /// communicated to the player. 
     /// </summary>
     public static event TimerMessageEventHandler OnTimer;
-    
+
+    #endregion
+
 
     // Private variables
+
     /// <summary>
     /// The internal BCP message queue.
     /// </summary>
@@ -219,7 +348,7 @@ public class BcpMessageManager : MonoBehaviour
 	private BcpMessageCallback _allMessageCallback;
 
     /// <summary>
-    /// The BCP message handler callback table.  Stores callback functions for each BCP message command.
+    /// The BCP message handler callback table.  Stores callback functions for processing each BCP message command.
     /// </summary>
 	private Hashtable _messageHandlerCallbackTable = new Hashtable();
 
@@ -231,18 +360,25 @@ public class BcpMessageManager : MonoBehaviour
     /// </value>
 	public static BcpMessageManager Instance { get; private set; }
 
+
+
     /// <summary>
     /// Called when the script instance is being loaded.
     /// </summary>
 	void Awake()
 	{
 		// Save a reference to the BcpMessageHandler component as our singleton instance
-		Instance = this;
+        if (Instance == null)
+		    Instance = this;
 	}
 
     /// <summary>
     /// Called on the frame when a script is enabled just before any of the Update methods is called the first time.
     /// </summary>
+    /// <remarks>
+    /// Sets up internal message handler callback functions for processing received BCP messages.  Also initiates the 
+    /// socket communications between the pinball controller and media controller server (Unity).
+    /// </remarks>
 	void Start() {
 		// Setup message handler callback functions for processing received messages
         BcpLogger.Trace("Setting up message handler callback functions");
@@ -270,7 +406,7 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("get", GetMessageHandler);
         SetMessageCallback("timer", TimerMessageHandler);
 
-		// Setup the socket communications between MPF and MC (Unity) (start listening)
+		// Setup the socket communications between PC and MC (Unity) (start listening)
         BcpLogger.Trace("Setting up BCP server (listening on port " + listenerPort.ToString() + ")");
         BcpServer.Instance.Init(listenerPort);
 		
@@ -278,11 +414,11 @@ public class BcpMessageManager : MonoBehaviour
 
 	
     /// <summary>
-    /// Processes any BCP messages that have been received.
+    /// Processes any BCP messages that have been received and queued for processing.
     /// </summary>
     /// <remarks>
-    /// Update is called every frame, if the MonoBehaviour is enabled.  This function runs in the main Unity thread and therefore
-    /// must access the message queue in a thread-safe manner.
+    /// Update is called every frame, if the MonoBehaviour is enabled.  This function runs in the main Unity thread and 
+    /// must access the received message queue in a thread-safe manner.
     /// </remarks>
 	void Update () {
 
@@ -346,7 +482,7 @@ public class BcpMessageManager : MonoBehaviour
 	}
 
     /// <summary>
-    /// Adds the BCP message to queue for processing.
+    /// Adds a BCP message to the queue for processing.
     /// </summary>
     /// <param name="message">The BCP message.</param>
     /// <remarks>
@@ -365,7 +501,7 @@ public class BcpMessageManager : MonoBehaviour
     /// Sets the method to call back on when any message is received.
     /// </summary>
     /// <param name="messageCallback">The message callback function.</param>
-	public void SetAllMessageCallback(BcpMessageCallback messageCallback)
+	protected void SetAllMessageCallback(BcpMessageCallback messageCallback)
 	{
 		_allMessageCallback = messageCallback;
 	}
@@ -375,13 +511,13 @@ public class BcpMessageManager : MonoBehaviour
     /// </summary>
     /// <param name="key">The key (message command name/text).</param>
     /// <param name="messageCallback">The message callback function.</param>
-	public void SetMessageCallback(string key, BcpMessageCallback messageCallback)
+	protected void SetMessageCallback(string key, BcpMessageCallback messageCallback)
 	{
 		_messageHandlerCallbackTable.Add(key, messageCallback);
 	}
 
     /// <summary>
-    /// Converts a socket packet to a BCP message.
+    /// Converts an unprocessed socket packet to a BCP message.
     /// </summary>
     /// <param name="buffer">The packet buffer.</param>
     /// <param name="length">The buffer length.</param>
@@ -436,14 +572,16 @@ public class BcpMessageManager : MonoBehaviour
 	}
 
     /// <summary>
-    /// Converts a BCP message to a socket packet to be sent to MPF.
+    /// Converts a BCP message to a socket packet to be sent to a pinball controller.
     /// </summary>
     /// <param name="message">The BCP message.</param>
     /// <param name="packet">The generated packet (by reference).</param>
     /// <returns>The length of the generated packet</returns>
-	public static int BcpMessageToPacket(BcpMessage message, out byte[] packet) {
+	public static int BcpMessageToPacket(BcpMessage message, out byte[] packet) 
+    {
 		StringBuilder parameters = new StringBuilder ();
-		foreach (string name in message.Parameters) {
+		foreach (string name in message.Parameters) 
+        {
 			if (parameters.Length > 0)
 				parameters.Append("&");
 			else
@@ -465,14 +603,15 @@ public class BcpMessageManager : MonoBehaviour
 
 
 	/************************************************************************************
-	 * BCP Message Handler functions (called when a specific message type is received)
+	 * Internal BCP Message Handler functions (called when a specific message type is received)
 	 ************************************************************************************/
 
     /// <summary>
-    /// Message handler callback function for all messages received (called before individual message handlers)
+    /// Internal message handler callback function for all BCP messages received (called before individual message handlers). 
+    /// Raises the <see cref="OnMessage"/> event.
     /// </summary>
     /// <param name="message">The BCP message.</param>
-	public void AllMessageHandler(BcpMessage message) 
+	protected void AllMessageHandler(BcpMessage message) 
     {
         // Raise the OnMessage event by invoking the delegate.
         if (OnMessage != null)
@@ -490,10 +629,10 @@ public class BcpMessageManager : MonoBehaviour
 
 
     /// <summary>
-    /// Message handler for all "hello" messages.
+    /// Internal message handler for all "hello" messages. Raises the <see cref="OnHello"/> event.
     /// </summary>
     /// <param name="message">The "hello" BCP message.</param>
-    public void HelloMessageHandler(BcpMessage message) {
+    protected void HelloMessageHandler(BcpMessage message) {
 
         string version = message.Parameters["version"] ?? String.Empty;
         if (String.IsNullOrEmpty(version))
@@ -525,10 +664,10 @@ public class BcpMessageManager : MonoBehaviour
 	}
 
     /// <summary>
-    /// Message handler for all "goodbye" messages.
+    /// Internal message handler for all "goodbye" messages. Raises the <see cref="OnGoodbye"/> event.
     /// </summary>
     /// <param name="message">The "goodbye" BCP message.</param>
-    public void GoodbyeMessageHandler(BcpMessage message)
+    protected void GoodbyeMessageHandler(BcpMessage message)
     {
         // Raise the OnGoodbye event by invoking the delegate. Pass in 
         // the object that initated the event (this) as well as the BcpMessage. 
@@ -557,10 +696,10 @@ public class BcpMessageManager : MonoBehaviour
 
 
     /// <summary>
-    /// Message handler for all "attract_start" messages.
+    /// Internal message handler for all "attract_start" messages. Raises the <see cref="OnAttractStart"/> event.
     /// </summary>
     /// <param name="message">The "attract_start" BCP message.</param>
-    public void AttractStartMessageHandler(BcpMessage message)
+    protected void AttractStartMessageHandler(BcpMessage message)
     {
         // Raise the OnAttractStart event by invoking the delegate.
         if (OnAttractStart != null)
@@ -578,10 +717,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "attract_stop" messages.
+    /// Internal message handler for all "attract_stop" messages. Raises the <see cref="OnAttractStop"/> event.
     /// </summary>
     /// <param name="message">The "attract_stop" BCP message.</param>
-    public void AttractStopMessageHandler(BcpMessage message)
+    protected void AttractStopMessageHandler(BcpMessage message)
     {
         // Raise the OnAttractStop event by invoking the delegate.
         if (OnAttractStop != null)
@@ -599,10 +738,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "game_start" messages.
+    /// Internal message handler for all "game_start" messages. Raises the <see cref="OnGameStart"/> event.
     /// </summary>
     /// <param name="message">The "game_start" BCP message.</param>
-    public void GameStartMessageHandler(BcpMessage message)
+    protected void GameStartMessageHandler(BcpMessage message)
     {
         if (OnGameStart != null)
         {
@@ -618,10 +757,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "game_end" messages.
+    /// Internal message handler for all "game_end" messages. Raises the <see cref="OnGameEnd"/> event.
     /// </summary>
     /// <param name="message">The "game_end" BCP message.</param>
-    public void GameEndMessageHandler(BcpMessage message)
+    protected void GameEndMessageHandler(BcpMessage message)
     {
         if (OnGameEnd != null)
         {
@@ -637,10 +776,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "ball_start" messages.
+    /// Internal message handler for all "ball_start" messages. Raises the <see cref="OnBallStart"/> event.
     /// </summary>
     /// <param name="message">The "ball_start" BCP message.</param>
-    public void BallStartMessageHandler(BcpMessage message)
+    protected void BallStartMessageHandler(BcpMessage message)
     {
         if (OnBallStart != null)
         {
@@ -659,20 +798,20 @@ public class BcpMessageManager : MonoBehaviour
 
 
     /// <summary>
-    /// Message handler for all "ball_end" messages.
+    /// Internal message handler for all "ball_end" messages. Raises the <see cref="OnBallEnd"/> event.
     /// </summary>
     /// <param name="message">The "ball_end" BCP message.</param>
-    public void BallEndMessageHandler(BcpMessage message)
+    protected void BallEndMessageHandler(BcpMessage message)
     {
         if (OnBallEnd != null)
             OnBallEnd(this, new BcpMessageEventArgs(message));
     }
 
     /// <summary>
-    /// Message handler for all "mode_start" messages.
+    /// Internal message handler for all "mode_start" messages. Raises the <see cref="OnModeStart"/> event.
     /// </summary>
     /// <param name="message">The "mode_start" BCP message.</param>
-    public void ModeStartMessageHandler(BcpMessage message)
+    protected void ModeStartMessageHandler(BcpMessage message)
     {
         if (OnModeStart != null)
         {
@@ -694,10 +833,10 @@ public class BcpMessageManager : MonoBehaviour
 	}
 
     /// <summary>
-    /// Message handler for all "mode_stop" messages.
+    /// Internal message handler for all "mode_stop" messages. Raises the <see cref="OnModeStop"/> event.
     /// </summary>
     /// <param name="message">The "mode_stop" BCP message.</param>
-    public void ModeStopMessageHandler(BcpMessage message)
+    protected void ModeStopMessageHandler(BcpMessage message)
     {
         if (OnModeStop != null)
         {
@@ -717,10 +856,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "player_added" messages.
+    /// Internal message handler for all "player_added" messages. Raises the <see cref="OnPlayerAdded"/> event.
     /// </summary>
     /// <param name="message">The "player_added" BCP message.</param>
-    public void PlayerAddedMessageHandler(BcpMessage message)
+    protected void PlayerAddedMessageHandler(BcpMessage message)
     {
         if (OnPlayerAdded != null)
         {
@@ -737,10 +876,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "player_turn_start" messages.
+    /// Internal message handler for all "player_turn_start" messages. Raises the <see cref="OnPlayerTurnStart"/> event.
     /// </summary>
     /// <param name="message">The "player_turn_start" BCP message.</param>
-    public void PlayerTurnStartMessageHandler(BcpMessage message)
+    protected void PlayerTurnStartMessageHandler(BcpMessage message)
     {
         if (OnPlayerTurnStart != null)
         {
@@ -757,10 +896,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "player_variable" messages.
+    /// Internal message handler for all "player_variable" messages. Raises the <see cref="OnPlayerVariable"/> event.
     /// </summary>
     /// <param name="message">The "player_variable" BCP message.</param>
-    public void PlayerVariableMessageHandler(BcpMessage message)
+    protected void PlayerVariableMessageHandler(BcpMessage message)
     {
         if (OnPlayerVariable != null)
         {
@@ -793,10 +932,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "player_score" messages.
+    /// Internal message handler for all "player_score" messages. Raises the <see cref="OnPlayerScore"/> event.
     /// </summary>
     /// <param name="message">The "player_score" BCP message.</param>
-    public void PlayerScoreMessageHandler(BcpMessage message)
+    protected void PlayerScoreMessageHandler(BcpMessage message)
     {
         if (OnPlayerScore != null)
         {
@@ -817,10 +956,10 @@ public class BcpMessageManager : MonoBehaviour
 
 
     /// <summary>
-    /// Message handler for all "switch" messages.
+    /// Internal message handler for all "switch" messages. Raises the <see cref="OnSwitch"/> event.
     /// </summary>
     /// <param name="message">The "switch" BCP message.</param>
-    public void SwitchMessageHandler(BcpMessage message)
+    protected void SwitchMessageHandler(BcpMessage message)
     {
         if (OnSwitch != null)
         {
@@ -842,10 +981,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "trigger" messages.
+    /// Internal message handler for all "trigger" messages. Raises the <see cref="OnTrigger"/> event.
     /// </summary>
     /// <param name="message">The "trigger" BCP message.</param>
-    public void TriggerMessageHandler(BcpMessage message)
+    protected void TriggerMessageHandler(BcpMessage message)
     {
         if (OnTrigger != null)
         {
@@ -865,10 +1004,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "error" messages.
+    /// Internal message handler for all "error" messages. Raises the <see cref="OnError"/> event.
     /// </summary>
     /// <param name="message">The "error" BCP message.</param>
-    public void ErrorMessageHandler(BcpMessage message)
+    protected void ErrorMessageHandler(BcpMessage message)
     {
         if (OnError != null)
         {
@@ -888,10 +1027,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "reset" messages.
+    /// Internal message handler for all "reset" messages. Raises the <see cref="OnReset"/> event.
     /// </summary>
     /// <param name="message">The "reset" BCP message.</param>
-    public void ResetMessageHandler(BcpMessage message)
+    protected void ResetMessageHandler(BcpMessage message)
     {
         if (OnReset != null)
         {
@@ -907,10 +1046,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "config" messages.
+    /// Internal message handler for all "config" messages. Raises the <see cref="OnConfig"/> event.
     /// </summary>
     /// <param name="message">The "config" BCP message.</param>
-    public void ConfigMessageHandler(BcpMessage message)
+    protected void ConfigMessageHandler(BcpMessage message)
     {
         if (OnConfig != null)
         {
@@ -926,10 +1065,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "set" messages.
+    /// Internal message handler for all "set" messages. Raises the <see cref="OnSet"/> event.
     /// </summary>
     /// <param name="message">The "set" BCP message.</param>
-    public void SetMessageHandler(BcpMessage message)
+    protected void SetMessageHandler(BcpMessage message)
     {
         if (OnSet != null)
         {
@@ -945,10 +1084,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "get" messages.
+    /// Internal message handler for all "get" messages. Raises the <see cref="OnGet"/> event.
     /// </summary>
     /// <param name="message">The "get" BCP message.</param>
-    public void GetMessageHandler(BcpMessage message)
+    protected void GetMessageHandler(BcpMessage message)
     {
         if (OnGet != null)
         {
@@ -964,10 +1103,10 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Message handler for all "timer" messages.
+    /// Internal message handler for all "timer" messages. Raises the <see cref="OnTimer"/> event.
     /// </summary>
     /// <param name="message">The "timer" BCP message.</param>
-    public void TimerMessageHandler(BcpMessage message)
+    protected void TimerMessageHandler(BcpMessage message)
     {
         if (OnTimer != null)
         {
@@ -1006,7 +1145,7 @@ public delegate void BcpMessageCallback(BcpMessage bcpMessage);
 
 
 /// <summary>
-/// Base class for all BCP message event args classes.
+/// Base class for all BCP message event arguments classes.  Contains the <see cref="BcpMessage"/> for the event.
 /// </summary>
 public class BcpMessageEventArgs : EventArgs
 {
