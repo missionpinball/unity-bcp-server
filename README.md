@@ -6,7 +6,7 @@ This [Unity](http://unity3d.com/) add-on was developed to provide the communicat
 
 For more information, see the [Backbox Control Protocol (BCP) Server for Unity Developer's Guide](Assets/BCP/Docs/Backbox%20Communication%20Protocol%20%28BCP%29%20Server%20for%20Unity%20-%20Deveoper%27s%20Guide.pdf) (writing still in progress).
 
-Auto-generated class documentation is also available: [Backbox Control Protocol (BCP) Server for Unity - Class Documentation](Assets/BCP/Docs/html/index.html).
+Auto-generated class documentation is also available: [Backbox Control Protocol (BCP) Server for Unity - Class Documentation](https://htmlpreview.github.io/?https://raw.githubusercontent.com/missionpinball/unity-bcp-server/master/Assets/BCP/Docs/html/annotated.html).
 
 Additional information and related discussions can be found on the [Mission Pinball Framework Forum](https://missionpinball.com/forum/).
 
