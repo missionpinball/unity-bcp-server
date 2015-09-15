@@ -54,7 +54,7 @@ public class GetBCPPlayerAdded : FsmStateAction
 	/// <param name="e">The <see cref="PlayerAddedMessageEventArgs"/> instance containing the event data.</param>
 	public void PlayerAdded(object sender, PlayerAddedMessageEventArgs e)
 	{
-		number.Value = e.Number;
+		number.Value = e.PlayerNum;
 		Fsm.Event(sendEvent);
 	}
 	

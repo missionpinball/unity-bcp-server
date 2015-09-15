@@ -53,7 +53,7 @@ public class GetBCPPlayerTurnStart : FsmStateAction
     /// <param name="e">The <see cref="PlayerTurnStartMessageEventArgs"/> instance containing the event data.</param>
     public void PlayerTurnStart(object sender, PlayerTurnStartMessageEventArgs e)
     {
-		player.Value = e.Player;
+		player.Value = e.PlayerNum;
 		Fsm.Event(sendEvent);
     }
 

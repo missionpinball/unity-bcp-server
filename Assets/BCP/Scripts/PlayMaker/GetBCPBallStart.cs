@@ -60,7 +60,7 @@ public class GetBCPBallStart : FsmStateAction
     /// <param name="e">The <see cref="BallStartMessageEventArgs"/> instance containing the event data.</param>
     public void BallStart(object sender, BallStartMessageEventArgs e)
     {
-        player.Value = e.Player;
+        player.Value = e.PlayerNum;
         ball.Value = e.Ball;
 		Fsm.Event(sendEvent);
 	}

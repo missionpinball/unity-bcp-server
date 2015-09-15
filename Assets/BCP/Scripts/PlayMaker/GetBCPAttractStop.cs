@@ -4,14 +4,19 @@ using HutongGames.PlayMaker;
 using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 
 /// <summary>
-/// Custom PlayMaker action for MPF that sends an Event when an MPF 'attract_stop' command is received.
+/// Custom PlayMaker action for MPF that sends an Event when an MPF attract 'mode_stop' command is received.
 /// </summary>
 [ActionCategory("BCP")]
-[Tooltip("Sends an Event when an MPF 'attract_stop' command is received.")]
+[Tooltip("Sends an Event when an MPF attract 'mode_stop' command is received.")]
 public class GetBCPAttractStop : FsmStateAction
 {
+    [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The PlayMaker event to send when an MPF 'attract_stop' command is received")]
+    [Tooltip("The name of the MPF attract mode to listen for")]
+    public string modeName;
+
+    [UIHint(UIHint.Variable)]
+    [Tooltip("The PlayMaker event to send when an MPF attract 'mode_stop' command is received")]
     public FsmEvent sendEvent;
 
     /// <summary>
@@ -19,35 +24,39 @@ public class GetBCPAttractStop : FsmStateAction
     /// </summary>
     public override void Reset()
     {
+        modeName = "attract";
         sendEvent = null;
     }
 
     /// <summary>
-    /// Called when the state becomes active. Adds the MPF BCP 'attract_stop' event handler.
+    /// Called when the state becomes active. Adds the MPF BCP 'mode_stop' event handler.
     /// </summary>
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnAttractStop += AttractModeStop;
+        BcpMessageManager.OnModeStop += ModeStop;
     }
 
     /// <summary>
-    /// Called before leaving the current state. Removes the MPF BCP 'attract_stop' event handler.
+    /// Called before leaving the current state. Removes the MPF BCP 'mode_stop' event handler.
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnAttractStop -= AttractModeStop;
-		base.OnExit();
+        BcpMessageManager.OnModeStop -= ModeStop;
+        base.OnExit();
     }
 
-
     /// <summary>
-    /// Event handler called when attract mode is stopped.
+    /// Event handler called when a mode stops.
     /// </summary>
-    /// <param name="sender">The event sender.</param>
-    public void AttractModeStop(object sender, BcpMessageEventArgs e)
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ModeStopMessageEventArgs"/> instance containing the event data.</param>
+    public void ModeStop(object sender, ModeStopMessageEventArgs e)
     {
-        Fsm.Event(sendEvent);
+        // Determine if this mode message is the one we are interested in.  If so, send specified FSM event.
+        if (!String.IsNullOrEmpty(modeName) && e.Name == modeName)
+            Fsm.Event(sendEvent);
+
     }
 
 

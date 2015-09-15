@@ -1,5 +1,5 @@
 var class_player_added_message_event_args =
 [
-    [ "PlayerAddedMessageEventArgs", "class_player_added_message_event_args.html#aff1d22671a8246d74733e03ff3d8bc59", null ],
-    [ "Number", "class_player_added_message_event_args.html#add238016e42343942b0d4cbe6c2c6dc8", null ]
+    [ "PlayerAddedMessageEventArgs", "class_player_added_message_event_args.html#a779d378bf6d5028773495db541106492", null ],
+    [ "PlayerNum", "class_player_added_message_event_args.html#a404a39333ec6c43045c6174980de7431", null ]
 ];

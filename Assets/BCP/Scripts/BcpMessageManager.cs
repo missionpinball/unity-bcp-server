@@ -152,6 +152,13 @@ public class BcpMessageManager : MonoBehaviour
     public delegate void SwitchMessageEventHandler(object sender, SwitchMessageEventArgs e);
 
     /// <summary>
+    /// Represents the method that will handle a 'shot' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="SwitchMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void ShotMessageEventHandler(object sender, ShotMessageEventArgs e);
+
+    /// <summary>
     /// Represents the method that will handle a 'trigger' BCP message event.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -200,17 +207,6 @@ public class BcpMessageManager : MonoBehaviour
     public static event BcpMessageEventHandler OnGoodbye;
 
     /// <summary>
-    /// Occurs when an "attract_start" BCP message is received (notification that attract mode has started).
-    /// </summary>
-    public static event BcpMessageEventHandler OnAttractStart;
-
-    /// <summary>
-    /// Occurs when an "attract_stop" BCP message is received (notification that attract mode has stopped).  Typically this will be followed by a 
-    /// "game_start" message, though it could also be followed by service mode starting.
-    /// </summary>
-    public static event BcpMessageEventHandler OnAttractStop;
-
-    /// <summary>
     /// Occurs when a "ball_start" BCP message is received.  Indicates that a ball has started. It passes the player number (“1″, “2”, etc.) and the 
     /// ball number as parameters. This command will be sent every time a ball starts, even if the same player is shooting again after an extra ball.
     /// </summary>
@@ -220,16 +216,6 @@ public class BcpMessageManager : MonoBehaviour
     /// Occurs when a "ball_end" BCP message is received.  Indicates the current ball has ended.
     /// </summary>
     public static event BcpMessageEventHandler OnBallEnd;
-
-    /// <summary>
-    /// Occurs when a "game_start" BCP message is received.  Indicates that a game has started.
-    /// </summary>
-    public static event BcpMessageEventHandler OnGameStart;
-
-    /// <summary>
-    /// Occurs when a "game_end" BCP message is received.  Indicates that a game has ended.
-    /// </summary>
-    public static event BcpMessageEventHandler OnGameEnd;
 
     /// <summary>
     /// Occurs when an "error" BCP message is received.  Indicates that a recent BCP message sent to BCP Triggered an error.
@@ -281,6 +267,11 @@ public class BcpMessageManager : MonoBehaviour
     /// would stop.)
     /// </summary>
     public static event SwitchMessageEventHandler OnSwitch;
+
+    /// <summary>
+    /// Occurs when a "shot" BCP message is received.  This message indicates that a shot was just hit.
+    /// </summary>
+    public static event ShotMessageEventHandler OnShot;
 
     /// <summary>
     /// Occurs when a "trigger" BCP message is received.  This message allows the one side to trigger the other side to do something. 
@@ -385,10 +376,6 @@ public class BcpMessageManager : MonoBehaviour
 		SetAllMessageCallback (AllMessageHandler);
 		SetMessageCallback("hello", HelloMessageHandler);
 		SetMessageCallback("goodbye", GoodbyeMessageHandler);
-        SetMessageCallback("attract_start", AttractStartMessageHandler);
-        SetMessageCallback("attract_stop", AttractStopMessageHandler);
-        SetMessageCallback("game_start", GameStartMessageHandler);
-        SetMessageCallback("game_end", GameEndMessageHandler);
         SetMessageCallback("ball_start", BallStartMessageHandler);
         SetMessageCallback("ball_end", BallEndMessageHandler);
         SetMessageCallback("mode_start", ModeStartMessageHandler);
@@ -398,6 +385,7 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("player_variable", PlayerVariableMessageHandler);
         SetMessageCallback("player_score", PlayerScoreMessageHandler);
         SetMessageCallback("switch", SwitchMessageHandler);
+        SetMessageCallback("shot", ShotMessageHandler);
         SetMessageCallback("trigger", TriggerMessageHandler);
         SetMessageCallback("error", ErrorMessageHandler);
         SetMessageCallback("reset", ResetMessageHandler);
@@ -696,86 +684,6 @@ public class BcpMessageManager : MonoBehaviour
 
 
     /// <summary>
-    /// Internal message handler for all "attract_start" messages. Raises the <see cref="OnAttractStart"/> event.
-    /// </summary>
-    /// <param name="message">The "attract_start" BCP message.</param>
-    protected void AttractStartMessageHandler(BcpMessage message)
-    {
-        // Raise the OnAttractStart event by invoking the delegate.
-        if (OnAttractStart != null)
-        {
-            try
-            {
-                OnAttractStart(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-
-    }
-
-    /// <summary>
-    /// Internal message handler for all "attract_stop" messages. Raises the <see cref="OnAttractStop"/> event.
-    /// </summary>
-    /// <param name="message">The "attract_stop" BCP message.</param>
-    protected void AttractStopMessageHandler(BcpMessage message)
-    {
-        // Raise the OnAttractStop event by invoking the delegate.
-        if (OnAttractStop != null)
-        {
-            try
-            {
-                OnAttractStop(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-
-    }
-
-    /// <summary>
-    /// Internal message handler for all "game_start" messages. Raises the <see cref="OnGameStart"/> event.
-    /// </summary>
-    /// <param name="message">The "game_start" BCP message.</param>
-    protected void GameStartMessageHandler(BcpMessage message)
-    {
-        if (OnGameStart != null)
-        {
-            try
-            {
-                OnGameStart(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Internal message handler for all "game_end" messages. Raises the <see cref="OnGameEnd"/> event.
-    /// </summary>
-    /// <param name="message">The "game_end" BCP message.</param>
-    protected void GameEndMessageHandler(BcpMessage message)
-    {
-        if (OnGameEnd != null)
-        {
-            try
-            {
-                OnGameEnd(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    /// <summary>
     /// Internal message handler for all "ball_start" messages. Raises the <see cref="OnBallStart"/> event.
     /// </summary>
     /// <param name="message">The "ball_start" BCP message.</param>
@@ -785,9 +693,9 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int player = int.Parse(message.Parameters["player"]);
+                int playerNum = int.Parse(message.Parameters["player_num"]);
                 int ball = int.Parse(message.Parameters["ball"]);
-                OnBallStart(this, new BallStartMessageEventArgs(message, player, ball));
+                OnBallStart(this, new BallStartMessageEventArgs(message, playerNum, ball));
             }
             catch (Exception e)
             {
@@ -865,8 +773,8 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int number = int.Parse(message.Parameters["number"]);
-                OnPlayerAdded(this, new PlayerAddedMessageEventArgs(message, number));
+                int playerNum = int.Parse(message.Parameters["player_num"]);
+                OnPlayerAdded(this, new PlayerAddedMessageEventArgs(message, playerNum));
             }
             catch (Exception e)
             {
@@ -885,8 +793,8 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int player = int.Parse(message.Parameters["player"]);
-                OnPlayerTurnStart(this, new PlayerTurnStartMessageEventArgs(message, player));
+                int playerNum = int.Parse(message.Parameters["player_num"]);
+                OnPlayerTurnStart(this, new PlayerTurnStartMessageEventArgs(message, playerNum));
             }
             catch (Exception e)
             {
@@ -905,6 +813,8 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
+                int playerNum = int.Parse(message.Parameters["player_num"]);
+                
                 string name = message.Parameters["name"];
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
@@ -921,7 +831,7 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(change))
                     throw new ArgumentException("Message parameter value expected", "change");
 
-                OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, name, value, previousValue, change));
+                OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
 
             }
             catch (Exception e)
@@ -941,11 +851,12 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
+                int playerNum = int.Parse(message.Parameters["player_num"]);
                 int value = int.Parse(message.Parameters["value"]);
                 int previousValue = int.Parse(message.Parameters["prev_value"]);
                 int change = int.Parse(message.Parameters["change"]);
 
-                OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, value, previousValue, change));
+                OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, playerNum, value, previousValue, change));
             }
             catch (Exception e)
             {
@@ -980,6 +891,39 @@ public class BcpMessageManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Internal message handler for all "shot" messages. Raises the <see cref="OnShot"/> event.
+    /// </summary>
+    /// <param name="message">The "shot" BCP message.</param>
+    protected void ShotMessageHandler(BcpMessage message)
+    {
+        if (OnShot != null)
+        {
+            try
+            {
+                string name = message.Parameters["name"];
+                if (String.IsNullOrEmpty(name))
+                    throw new ArgumentException("Message parameter value expected", "name");
+
+                string profile = message.Parameters["profile"];
+                if (String.IsNullOrEmpty(profile))
+                    throw new ArgumentException("Message parameter value expected", "profile");
+
+                string state = message.Parameters["state"];
+                if (String.IsNullOrEmpty(name))
+                    throw new ArgumentException("Message parameter value expected", "state");
+
+                OnShot(this, new ShotMessageEventArgs(message, name, profile, state));
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
+    }
+
+    
     /// <summary>
     /// Internal message handler for all "trigger" messages. Raises the <see cref="OnTrigger"/> event.
     /// </summary>
@@ -1203,7 +1147,7 @@ public class BallStartMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The player number.
     /// </value>
-    public int Player { get; set; }
+    public int PlayerNum { get; set; }
 
     /// <summary>
     /// Gets or sets the ball number.
@@ -1217,12 +1161,12 @@ public class BallStartMessageEventArgs : BcpMessageEventArgs
     /// Initializes a new instance of the <see cref="BallStartMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="player">The player number.</param>
+    /// <param name="playerNum">The player number.</param>
     /// <param name="ball">The ball number.</param>
-    public BallStartMessageEventArgs(BcpMessage bcpMessage, int player, int ball) :
+    public BallStartMessageEventArgs(BcpMessage bcpMessage, int playerNum, int ball) :
         base(bcpMessage)
     {
-        this.Player = player;
+        this.PlayerNum = playerNum;
         this.Ball = ball;
     }
 }
@@ -1322,6 +1266,14 @@ public class ModeStopMessageEventArgs : BcpMessageEventArgs
 public class PlayerScoreMessageEventArgs : BcpMessageEventArgs
 {
     /// <summary>
+    /// Gets or sets the player number value.
+    /// </summary>
+    /// <value>
+    /// The player number.
+    /// </value>
+    public int PlayerNum { get; set; }
+
+    /// <summary>
     /// Gets or sets the current player's score value.
     /// </summary>
     /// <value>
@@ -1349,12 +1301,14 @@ public class PlayerScoreMessageEventArgs : BcpMessageEventArgs
     /// Initializes a new instance of the <see cref="PlayerScoreMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="value">The current player's score value.</param>
-    /// <param name="previousValue">The current player's previous score value.</param>
-    /// <param name="change">The change in the current player's score.</param>
-    public PlayerScoreMessageEventArgs(BcpMessage bcpMessage, int value, int previousValue, int change) :
+    /// <param name="playerNum">The player number.</param>
+    /// <param name="value">The specified player's score value.</param>
+    /// <param name="previousValue">The specified player's previous score value.</param>
+    /// <param name="change">The change in the specified player's score.</param>
+    public PlayerScoreMessageEventArgs(BcpMessage bcpMessage, int playerNum, int value, int previousValue, int change) :
         base(bcpMessage)
     {
+        this.PlayerNum = playerNum;
         this.Value = value;
         this.PreviousValue = previousValue;
         this.Change = change;
@@ -1373,17 +1327,17 @@ public class PlayerAddedMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The player number.
     /// </value>
-    public int Number { get; set; }
+    public int PlayerNum { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlayerAddedMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="number">The player number.</param>
-    public PlayerAddedMessageEventArgs(BcpMessage bcpMessage, int number) :
+    /// <param name="playerNum">The player number.</param>
+    public PlayerAddedMessageEventArgs(BcpMessage bcpMessage, int playerNum) :
         base(bcpMessage)
     {
-        this.Number = number;
+        this.PlayerNum = playerNum;
     }
 }
 
@@ -1399,17 +1353,17 @@ public class PlayerTurnStartMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The player number.
     /// </value>
-    public int Player { get; set; }
+    public int PlayerNum { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlayerTurnStartMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="player">The player number.</param>
-    public PlayerTurnStartMessageEventArgs(BcpMessage bcpMessage, int player) :
+    /// <param name="playerNum">The player number.</param>
+    public PlayerTurnStartMessageEventArgs(BcpMessage bcpMessage, int playerNum) :
         base(bcpMessage)
     {
-        this.Player = player;
+        this.PlayerNum = playerNum;
     }
 }
 
@@ -1419,6 +1373,14 @@ public class PlayerTurnStartMessageEventArgs : BcpMessageEventArgs
 /// </summary>
 public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
 {
+    /// <summary>
+    /// Gets or sets the player number.
+    /// </summary>
+    /// <value>
+    /// The player number.
+    /// </value>
+    public int PlayerNum { get; set; }
+
     /// <summary>
     /// Gets or sets the player variable name.
     /// </summary>
@@ -1455,13 +1417,15 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
     /// Initializes a new instance of the <see cref="PlayerVariableMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="playerNum">The player number.</param>
     /// <param name="name">The player variable name.</param>
     /// <param name="value">The player variable value.</param>
     /// <param name="previousValue">The previous value of the player variable.</param>
     /// <param name="change">The change in value of the player variable.</param>
-    public PlayerVariableMessageEventArgs(BcpMessage bcpMessage, string name, string value, string previousValue, string change) :
+    public PlayerVariableMessageEventArgs(BcpMessage bcpMessage, int playerNum, string name, string value, string previousValue, string change) :
         base(bcpMessage)
     {
+        this.PlayerNum = playerNum;
         this.Name = name;
         this.Value = value;
         this.PreviousValue = previousValue;
@@ -1502,6 +1466,52 @@ public class SwitchMessageEventArgs : BcpMessageEventArgs
     {
         this.Name = name;
         this.Value = value;
+    }
+}
+
+
+/// <summary>
+/// Event arguments for the "shot" BCP message.
+/// </summary>
+public class ShotMessageEventArgs : BcpMessageEventArgs
+{
+    /// <summary>
+    /// Gets or sets the shot name.
+    /// </summary>
+    /// <value>
+    /// The switch name.
+    /// </value>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the shot profile value.
+    /// </summary>
+    /// <value>
+    /// The shot profile value.
+    /// </value>
+    public string Profile { get; set; }
+
+    /// <summary>
+    /// Gets or sets the shot state value.
+    /// </summary>
+    /// <value>
+    /// The shot state value.
+    /// </value>
+    public string State { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="ShotMessageEventArgs"/> class.
+    /// </summary>
+    /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="name">The shot name.</param>
+    /// <param name="profile">The shot profile value.</param>
+    /// <param name="state">The shot state value.</param>
+    public ShotMessageEventArgs(BcpMessage bcpMessage, string name, string profile, string state) :
+        base(bcpMessage)
+    {
+        this.Name = name;
+        this.Profile = profile;
+        this.State = state;
     }
 }
 

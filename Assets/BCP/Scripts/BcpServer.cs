@@ -20,7 +20,12 @@ public class BcpServer : MonoBehaviour
     /// <summary>
     /// The BCP Server version
     /// </summary>
-    public const string BCP_SERVER_VERSION = "1.00";
+    public const string VERSION = "1.01";
+
+    /// <summary>
+    /// The BCP Specification document version implemented
+    /// </summary>
+    public const string BCP_SPECIFICATION_VERSION = "1.00";
 
     /// <summary>
     /// The TCP listener.
@@ -96,7 +101,8 @@ public class BcpServer : MonoBehaviour
 	public void Init(int port)
     {
         BcpLogger.Trace("BcpServer: Initializing");
-        BcpLogger.Trace("BcpServer: Version " + BCP_SERVER_VERSION);
+        BcpLogger.Trace("BcpServer: Server Version " + VERSION);
+        BcpLogger.Trace("BcpServer: BCP Specification Version " + BCP_SPECIFICATION_VERSION);
 
         // Create TCP/IP socket
         _listeningForClient = true;

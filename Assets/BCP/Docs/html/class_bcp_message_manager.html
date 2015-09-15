@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Backbox Communication Protocol (BCP) Server for Unity
-   &#160;<span id="projectnumber">1.00</span>
+   &#160;<span id="projectnumber">1.01</span>
    </div>
   </td>
  </tr>
@@ -124,6 +124,9 @@ Public Member Functions</h2></td></tr>
 <tr class="memitem:af29e7f156893c61f6653b34e8fedce96"><td class="memItemLeft" align="right" valign="top">delegate void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#af29e7f156893c61f6653b34e8fedce96">SwitchMessageEventHandler</a> (object sender, <a class="el" href="class_switch_message_event_args.html">SwitchMessageEventArgs</a> e)</td></tr>
 <tr class="memdesc:af29e7f156893c61f6653b34e8fedce96"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the method that will handle a 'switch' BCP message event.  <a href="#af29e7f156893c61f6653b34e8fedce96">More...</a><br /></td></tr>
 <tr class="separator:af29e7f156893c61f6653b34e8fedce96"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab59a2540e8363af5b18f5c1f3efdf222"><td class="memItemLeft" align="right" valign="top">delegate void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ab59a2540e8363af5b18f5c1f3efdf222">ShotMessageEventHandler</a> (object sender, <a class="el" href="class_shot_message_event_args.html">ShotMessageEventArgs</a> e)</td></tr>
+<tr class="memdesc:ab59a2540e8363af5b18f5c1f3efdf222"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the method that will handle a 'shot' BCP message event.  <a href="#ab59a2540e8363af5b18f5c1f3efdf222">More...</a><br /></td></tr>
+<tr class="separator:ab59a2540e8363af5b18f5c1f3efdf222"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a8fb77eed872529efa8c3a9b6114b8690"><td class="memItemLeft" align="right" valign="top">delegate void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a8fb77eed872529efa8c3a9b6114b8690">TriggerMessageEventHandler</a> (object sender, <a class="el" href="class_trigger_message_event_args.html">TriggerMessageEventArgs</a> e)</td></tr>
 <tr class="memdesc:a8fb77eed872529efa8c3a9b6114b8690"><td class="mdescLeft">&#160;</td><td class="mdescRight">Represents the method that will handle a 'trigger' BCP message event.  <a href="#a8fb77eed872529efa8c3a9b6114b8690">More...</a><br /></td></tr>
 <tr class="separator:a8fb77eed872529efa8c3a9b6114b8690"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -181,18 +184,6 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:ada26476472fdcc88c6c6232d8ce2841e"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ada26476472fdcc88c6c6232d8ce2841e">GoodbyeMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
 <tr class="memdesc:ada26476472fdcc88c6c6232d8ce2841e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "goodbye" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a1e179f3b44eaf52a3a65b421ff1fea20" title="Occurs when a &quot;goodbye&quot; BCP message is received. Indicates the MPF pin controller is shutting down...">OnGoodbye</a> event.  <a href="#ada26476472fdcc88c6c6232d8ce2841e">More...</a><br /></td></tr>
 <tr class="separator:ada26476472fdcc88c6c6232d8ce2841e"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:aec00ffe26288a3ed1be6b1e5914da357"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#aec00ffe26288a3ed1be6b1e5914da357">AttractStartMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
-<tr class="memdesc:aec00ffe26288a3ed1be6b1e5914da357"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "attract_start" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ac8cfea3a595a97650fd328dc11683bc7" title="Occurs when an &quot;attract_start&quot; BCP message is received (notification that attract mode has started)...">OnAttractStart</a> event.  <a href="#aec00ffe26288a3ed1be6b1e5914da357">More...</a><br /></td></tr>
-<tr class="separator:aec00ffe26288a3ed1be6b1e5914da357"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1a21d341c7fad38f21d7c0be2d826df5"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a1a21d341c7fad38f21d7c0be2d826df5">AttractStopMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
-<tr class="memdesc:a1a21d341c7fad38f21d7c0be2d826df5"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "attract_stop" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a15e73b2bbdc3f484d82a6eefa050cc11" title="Occurs when an &quot;attract_stop&quot; BCP message is received (notification that attract mode has stopped)...">OnAttractStop</a> event.  <a href="#a1a21d341c7fad38f21d7c0be2d826df5">More...</a><br /></td></tr>
-<tr class="separator:a1a21d341c7fad38f21d7c0be2d826df5"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a1ecf3a67d7410df13f600817090b1c80"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a1ecf3a67d7410df13f600817090b1c80">GameStartMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
-<tr class="memdesc:a1ecf3a67d7410df13f600817090b1c80"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "game_start" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ac9e1bda2e7eed4637ffb8db91082c0e7" title="Occurs when a &quot;game_start&quot; BCP message is received. Indicates that a game has started. ">OnGameStart</a> event.  <a href="#a1ecf3a67d7410df13f600817090b1c80">More...</a><br /></td></tr>
-<tr class="separator:a1ecf3a67d7410df13f600817090b1c80"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a364ea71ef027a3b633e80fb74287beea"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a364ea71ef027a3b633e80fb74287beea">GameEndMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
-<tr class="memdesc:a364ea71ef027a3b633e80fb74287beea"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "game_end" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ae26660632679358bb72a42cc660d256a" title="Occurs when a &quot;game_end&quot; BCP message is received. Indicates that a game has ended. ">OnGameEnd</a> event.  <a href="#a364ea71ef027a3b633e80fb74287beea">More...</a><br /></td></tr>
-<tr class="separator:a364ea71ef027a3b633e80fb74287beea"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ab50aab634edc7d55b4eb85624a239775"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ab50aab634edc7d55b4eb85624a239775">BallStartMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
 <tr class="memdesc:ab50aab634edc7d55b4eb85624a239775"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "ball_start" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a45b5dba475a2bc6ac8e86141a03ffb30" title="Occurs when a &quot;ball_start&quot; BCP message is received. Indicates that a ball has started. It passes the player number (“1″, “2”, etc.) and the ball number as parameters. This command will be sent every time a ball starts, even if the same player is shooting again after an extra ball. ">OnBallStart</a> event.  <a href="#ab50aab634edc7d55b4eb85624a239775">More...</a><br /></td></tr>
 <tr class="separator:ab50aab634edc7d55b4eb85624a239775"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -220,6 +211,9 @@ Protected Member Functions</h2></td></tr>
 <tr class="memitem:a672a51837e435194647c023a5aca0576"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a672a51837e435194647c023a5aca0576">SwitchMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
 <tr class="memdesc:a672a51837e435194647c023a5aca0576"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "switch" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ad6fc0a233d70801902cafa40ae222e06" title="Occurs when a &quot;switch&quot; BCP message is received. This message is used to send switch inputs to things ...">OnSwitch</a> event.  <a href="#a672a51837e435194647c023a5aca0576">More...</a><br /></td></tr>
 <tr class="separator:a672a51837e435194647c023a5aca0576"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab6898623c31befe37aa5701c95365cd4"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ab6898623c31befe37aa5701c95365cd4">ShotMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
+<tr class="memdesc:ab6898623c31befe37aa5701c95365cd4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "shot" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a9147beab3f599d4b9c378dbd467eba25" title="Occurs when a &quot;shot&quot; BCP message is received. This message indicates that a shot was just hit...">OnShot</a> event.  <a href="#ab6898623c31befe37aa5701c95365cd4">More...</a><br /></td></tr>
+<tr class="separator:ab6898623c31befe37aa5701c95365cd4"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ac707b644d61d7d5b05b68d23ae382c1c"><td class="memItemLeft" align="right" valign="top">void&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ac707b644d61d7d5b05b68d23ae382c1c">TriggerMessageHandler</a> (<a class="el" href="class_bcp_message.html">BcpMessage</a> message)</td></tr>
 <tr class="memdesc:ac707b644d61d7d5b05b68d23ae382c1c"><td class="mdescLeft">&#160;</td><td class="mdescRight">Internal message handler for all "trigger" messages. Raises the <a class="el" href="class_bcp_message_manager.html#aafc121c3ad80db483bde1641e7ca3c61" title="Occurs when a &quot;trigger&quot; BCP message is received. This message allows the one side to trigger the othe...">OnTrigger</a> event.  <a href="#ac707b644d61d7d5b05b68d23ae382c1c">More...</a><br /></td></tr>
 <tr class="separator:ac707b644d61d7d5b05b68d23ae382c1c"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -259,24 +253,12 @@ Events</h2></td></tr>
 <tr class="memitem:a1e179f3b44eaf52a3a65b421ff1fea20"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a1e179f3b44eaf52a3a65b421ff1fea20">OnGoodbye</a></td></tr>
 <tr class="memdesc:a1e179f3b44eaf52a3a65b421ff1fea20"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "goodbye" BCP message is received. Indicates the MPF pin controller is shutting down.  <a href="#a1e179f3b44eaf52a3a65b421ff1fea20">More...</a><br /></td></tr>
 <tr class="separator:a1e179f3b44eaf52a3a65b421ff1fea20"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac8cfea3a595a97650fd328dc11683bc7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ac8cfea3a595a97650fd328dc11683bc7">OnAttractStart</a></td></tr>
-<tr class="memdesc:ac8cfea3a595a97650fd328dc11683bc7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when an "attract_start" BCP message is received (notification that attract mode has started).  <a href="#ac8cfea3a595a97650fd328dc11683bc7">More...</a><br /></td></tr>
-<tr class="separator:ac8cfea3a595a97650fd328dc11683bc7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:a15e73b2bbdc3f484d82a6eefa050cc11"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a15e73b2bbdc3f484d82a6eefa050cc11">OnAttractStop</a></td></tr>
-<tr class="memdesc:a15e73b2bbdc3f484d82a6eefa050cc11"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when an "attract_stop" BCP message is received (notification that attract mode has stopped). Typically this will be followed by a "game_start" message, though it could also be followed by service mode starting.  <a href="#a15e73b2bbdc3f484d82a6eefa050cc11">More...</a><br /></td></tr>
-<tr class="separator:a15e73b2bbdc3f484d82a6eefa050cc11"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a45b5dba475a2bc6ac8e86141a03ffb30"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#a96abc27de53af8ddf4499fe66309f594">BallStartMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a45b5dba475a2bc6ac8e86141a03ffb30">OnBallStart</a></td></tr>
 <tr class="memdesc:a45b5dba475a2bc6ac8e86141a03ffb30"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "ball_start" BCP message is received. Indicates that a ball has started. It passes the player number (“1″, “2”, etc.) and the ball number as parameters. This command will be sent every time a ball starts, even if the same player is shooting again after an extra ball.  <a href="#a45b5dba475a2bc6ac8e86141a03ffb30">More...</a><br /></td></tr>
 <tr class="separator:a45b5dba475a2bc6ac8e86141a03ffb30"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aa94e0bce5b7b2cce4e5600e127ef94d4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#aa94e0bce5b7b2cce4e5600e127ef94d4">OnBallEnd</a></td></tr>
 <tr class="memdesc:aa94e0bce5b7b2cce4e5600e127ef94d4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "ball_end" BCP message is received. Indicates the current ball has ended.  <a href="#aa94e0bce5b7b2cce4e5600e127ef94d4">More...</a><br /></td></tr>
 <tr class="separator:aa94e0bce5b7b2cce4e5600e127ef94d4"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ac9e1bda2e7eed4637ffb8db91082c0e7"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ac9e1bda2e7eed4637ffb8db91082c0e7">OnGameStart</a></td></tr>
-<tr class="memdesc:ac9e1bda2e7eed4637ffb8db91082c0e7"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "game_start" BCP message is received. Indicates that a game has started.  <a href="#ac9e1bda2e7eed4637ffb8db91082c0e7">More...</a><br /></td></tr>
-<tr class="separator:ac9e1bda2e7eed4637ffb8db91082c0e7"><td class="memSeparator" colspan="2">&#160;</td></tr>
-<tr class="memitem:ae26660632679358bb72a42cc660d256a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ae26660632679358bb72a42cc660d256a">OnGameEnd</a></td></tr>
-<tr class="memdesc:ae26660632679358bb72a42cc660d256a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "game_end" BCP message is received. Indicates that a game has ended.  <a href="#ae26660632679358bb72a42cc660d256a">More...</a><br /></td></tr>
-<tr class="separator:ae26660632679358bb72a42cc660d256a"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:abd0668570daa40ce311c2043965acad8"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#af3a5a9ab68b6db898ec9dc75db4028c5">ErrorMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#abd0668570daa40ce311c2043965acad8">OnError</a></td></tr>
 <tr class="memdesc:abd0668570daa40ce311c2043965acad8"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when an "error" BCP message is received. Indicates that a recent BCP message sent to BCP Triggered an error.  <a href="#abd0668570daa40ce311c2043965acad8">More...</a><br /></td></tr>
 <tr class="separator:abd0668570daa40ce311c2043965acad8"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -301,6 +283,9 @@ Events</h2></td></tr>
 <tr class="memitem:ad6fc0a233d70801902cafa40ae222e06"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#af29e7f156893c61f6653b34e8fedce96">SwitchMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#ad6fc0a233d70801902cafa40ae222e06">OnSwitch</a></td></tr>
 <tr class="memdesc:ad6fc0a233d70801902cafa40ae222e06"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "switch" BCP message is received. This message is used to send switch inputs to things like video modes, high score name entry, and service menu navigation. Note that the pin controller should not send the state of every switch change at all times, as the media controller doesn’t need it and that would add lots of unnecessary commands. Instead the pin controller should only send switches based on some mode of operation that needs them. (For example, when the video mode starts, the pin controller would start sending the switch states of the flipper buttons, and when the video mode ends, it would stop.)  <a href="#ad6fc0a233d70801902cafa40ae222e06">More...</a><br /></td></tr>
 <tr class="separator:ad6fc0a233d70801902cafa40ae222e06"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a9147beab3f599d4b9c378dbd467eba25"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#ab59a2540e8363af5b18f5c1f3efdf222">ShotMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#a9147beab3f599d4b9c378dbd467eba25">OnShot</a></td></tr>
+<tr class="memdesc:a9147beab3f599d4b9c378dbd467eba25"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "shot" BCP message is received. This message indicates that a shot was just hit.  <a href="#a9147beab3f599d4b9c378dbd467eba25">More...</a><br /></td></tr>
+<tr class="separator:a9147beab3f599d4b9c378dbd467eba25"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:aafc121c3ad80db483bde1641e7ca3c61"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message_manager.html#a8fb77eed872529efa8c3a9b6114b8690">TriggerMessageEventHandler</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message_manager.html#aafc121c3ad80db483bde1641e7ca3c61">OnTrigger</a></td></tr>
 <tr class="memdesc:aafc121c3ad80db483bde1641e7ca3c61"><td class="mdescLeft">&#160;</td><td class="mdescRight">Occurs when a "trigger" BCP message is received. This message allows the one side to trigger the other side to do something. For example, the pin controller might send trigger commands to tell the media controller to start shows, play sound effects, or update the display. The media controller might send a trigger to the pin controller to flash the strobes at the down beat of a music track or to pulse the knocker in concert with a replay show.  <a href="#aafc121c3ad80db483bde1641e7ca3c61">More...</a><br /></td></tr>
 <tr class="separator:aafc121c3ad80db483bde1641e7ca3c61"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -400,70 +385,6 @@ Events</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">message</td><td>The BCP message.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="aec00ffe26288a3ed1be6b1e5914da357"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BcpMessageManager.AttractStartMessageHandler </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td>
-          <td class="paramname"><em>message</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Internal message handler for all "attract_start" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ac8cfea3a595a97650fd328dc11683bc7" title="Occurs when an &quot;attract_start&quot; BCP message is received (notification that attract mode has started)...">OnAttractStart</a> event. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>The "attract_start" BCP message.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a1a21d341c7fad38f21d7c0be2d826df5"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BcpMessageManager.AttractStopMessageHandler </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td>
-          <td class="paramname"><em>message</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Internal message handler for all "attract_stop" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a15e73b2bbdc3f484d82a6eefa050cc11" title="Occurs when an &quot;attract_stop&quot; BCP message is received (notification that attract mode has stopped)...">OnAttractStop</a> event. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>The "attract_stop" BCP message.</td></tr>
   </table>
   </dd>
 </dl>
@@ -776,70 +697,6 @@ Events</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">message</td><td>The "error" BCP message.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a364ea71ef027a3b633e80fb74287beea"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BcpMessageManager.GameEndMessageHandler </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td>
-          <td class="paramname"><em>message</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Internal message handler for all "game_end" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ae26660632679358bb72a42cc660d256a" title="Occurs when a &quot;game_end&quot; BCP message is received. Indicates that a game has ended. ">OnGameEnd</a> event. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>The "game_end" BCP message.</td></tr>
-  </table>
-  </dd>
-</dl>
-
-</div>
-</div>
-<a class="anchor" id="a1ecf3a67d7410df13f600817090b1c80"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname">void BcpMessageManager.GameStartMessageHandler </td>
-          <td>(</td>
-          <td class="paramtype"><a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td>
-          <td class="paramname"><em>message</em></td><td>)</td>
-          <td></td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Internal message handler for all "game_start" messages. Raises the <a class="el" href="class_bcp_message_manager.html#ac9e1bda2e7eed4637ffb8db91082c0e7" title="Occurs when a &quot;game_start&quot; BCP message is received. Indicates that a game has started. ">OnGameStart</a> event. </p>
-<dl class="params"><dt>Parameters</dt><dd>
-  <table class="params">
-    <tr><td class="paramname">message</td><td>The "game_start" BCP message.</td></tr>
   </table>
   </dd>
 </dl>
@@ -1597,6 +1454,73 @@ Events</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="ab59a2540e8363af5b18f5c1f3efdf222"></a>
+<div class="memitem">
+<div class="memproto">
+      <table class="memname">
+        <tr>
+          <td class="memname">delegate void BcpMessageManager.ShotMessageEventHandler </td>
+          <td>(</td>
+          <td class="paramtype">object&#160;</td>
+          <td class="paramname"><em>sender</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype"><a class="el" href="class_shot_message_event_args.html">ShotMessageEventArgs</a>&#160;</td>
+          <td class="paramname"><em>e</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+</div><div class="memdoc">
+
+<p>Represents the method that will handle a 'shot' BCP message event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">sender</td><td>The sender.</td></tr>
+    <tr><td class="paramname">e</td><td>The <a class="el" href="class_switch_message_event_args.html" title="Event arguments for the &quot;switch&quot; BCP message. ">SwitchMessageEventArgs</a> instance containing the event message data.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
+<a class="anchor" id="ab6898623c31befe37aa5701c95365cd4"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">void BcpMessageManager.ShotMessageHandler </td>
+          <td>(</td>
+          <td class="paramtype"><a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td>
+          <td class="paramname"><em>message</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">protected</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Internal message handler for all "shot" messages. Raises the <a class="el" href="class_bcp_message_manager.html#a9147beab3f599d4b9c378dbd467eba25" title="Occurs when a &quot;shot&quot; BCP message is received. This message indicates that a shot was just hit...">OnShot</a> event. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">message</td><td>The "shot" BCP message.</td></tr>
+  </table>
+  </dd>
+</dl>
+
+</div>
+</div>
 <a class="anchor" id="afc8737866454542160541e3f24c5d791"></a>
 <div class="memitem">
 <div class="memproto">
@@ -1899,50 +1823,6 @@ Events</h2></td></tr>
 </div>
 </div>
 <h2 class="groupheader">Event Documentation</h2>
-<a class="anchor" id="ac8cfea3a595a97650fd328dc11683bc7"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a> BcpMessageManager.OnAttractStart</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Occurs when an "attract_start" BCP message is received (notification that attract mode has started). </p>
-
-</div>
-</div>
-<a class="anchor" id="a15e73b2bbdc3f484d82a6eefa050cc11"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a> BcpMessageManager.OnAttractStop</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Occurs when an "attract_stop" BCP message is received (notification that attract mode has stopped). Typically this will be followed by a "game_start" message, though it could also be followed by service mode starting. </p>
-
-</div>
-</div>
 <a class="anchor" id="aa94e0bce5b7b2cce4e5600e127ef94d4"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2028,50 +1908,6 @@ Events</h2></td></tr>
 </div><div class="memdoc">
 
 <p>Occurs when an "error" BCP message is received. Indicates that a recent BCP message sent to BCP Triggered an error. </p>
-
-</div>
-</div>
-<a class="anchor" id="ae26660632679358bb72a42cc660d256a"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a> BcpMessageManager.OnGameEnd</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Occurs when a "game_end" BCP message is received. Indicates that a game has ended. </p>
-
-</div>
-</div>
-<a class="anchor" id="ac9e1bda2e7eed4637ffb8db91082c0e7"></a>
-<div class="memitem">
-<div class="memproto">
-<table class="mlabels">
-  <tr>
-  <td class="mlabels-left">
-      <table class="memname">
-        <tr>
-          <td class="memname"><a class="el" href="class_bcp_message_manager.html#ac388b57bbe0b95ad0d97c4b41126361d">BcpMessageEventHandler</a> BcpMessageManager.OnGameStart</td>
-        </tr>
-      </table>
-  </td>
-  <td class="mlabels-right">
-<span class="mlabels"><span class="mlabel">static</span></span>  </td>
-  </tr>
-</table>
-</div><div class="memdoc">
-
-<p>Occurs when a "game_start" BCP message is received. Indicates that a game has started. </p>
 
 </div>
 </div>
@@ -2340,6 +2176,28 @@ Events</h2></td></tr>
 
 </div>
 </div>
+<a class="anchor" id="a9147beab3f599d4b9c378dbd467eba25"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname"><a class="el" href="class_bcp_message_manager.html#ab59a2540e8363af5b18f5c1f3efdf222">ShotMessageEventHandler</a> BcpMessageManager.OnShot</td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Occurs when a "shot" BCP message is received. This message indicates that a shot was just hit. </p>
+
+</div>
+</div>
 <a class="anchor" id="ad6fc0a233d70801902cafa40ae222e06"></a>
 <div class="memitem">
 <div class="memproto">
@@ -2415,7 +2273,7 @@ Events</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_bcp_message_manager.html">BcpMessageManager</a></li>
-    <li class="footer">Generated on Sat Jun 27 2015 11:35:53 for Backbox Communication Protocol (BCP) Server for Unity by
+    <li class="footer">Generated on Tue Sep 15 2015 08:45:33 for Backbox Communication Protocol (BCP) Server for Unity by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

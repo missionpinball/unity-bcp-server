@@ -4,14 +4,23 @@ using HutongGames.PlayMaker;
 using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 
 /// <summary>
-/// Custom PlayMaker action for MPF that sends an Event when an MPF 'game_start' command is received.
+/// Custom PlayMaker action for MPF that sends an Event when an MPF game 'mode_start' command is received.
 /// </summary>
 [ActionCategory("BCP")]
-[Tooltip("Sends an Event when an MPF 'game_start' command is received.")]
+[Tooltip("Sends an Event when an MPF game 'mode_start' command is received.")]
 public class GetBCPGameStart : FsmStateAction
 {
+    [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The PlayMaker event to send when an MPF 'game_start' command is received")]
+    [Tooltip("The name of the MPF game mode to listen for")]
+    public string modeName;
+
+    [UIHint(UIHint.Variable)]
+    [Tooltip("The optional variable to receive the value of the priority for the specified mode")]
+    public FsmInt priority;
+
+    [UIHint(UIHint.Variable)]
+    [Tooltip("The PlayMaker event to send when an MPF game 'mode_start' command is received")]
     public FsmEvent sendEvent;
 
     /// <summary>
@@ -19,35 +28,44 @@ public class GetBCPGameStart : FsmStateAction
     /// </summary>
     public override void Reset()
     {
+        modeName = "game";
+        priority = null;
         sendEvent = null;
     }
 
     /// <summary>
-    /// Called when the state becomes active. Adds the MPF BCP 'game_start' event handler.
+    /// Called when the state becomes active. Adds the MPF BCP 'mode_start' event handler.
     /// </summary>
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnGameStart += GameStart;
+        BcpMessageManager.OnModeStart += ModeStart;
     }
 
     /// <summary>
-    /// Called before leaving the current state. Removes the MPF BCP 'game_start' event handler.
+    /// Called before leaving the current state. Removes the MPF BCP 'mode_start' event handler.
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnGameStart -= GameStart;
-		base.OnExit();
+        BcpMessageManager.OnModeStart -= ModeStart;
+        base.OnExit();
     }
 
-
     /// <summary>
-    /// Event handler called when a game is started.
+    /// Event handler called when a mode is started.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    public void GameStart(object sender, BcpMessageEventArgs e)
+    /// <param name="e">The <see cref="ModeStartMessageEventArgs"/> instance containing the event data.</param>
+    public void ModeStart(object sender, ModeStartMessageEventArgs e)
     {
-        Fsm.Event(sendEvent);
+        // Determine if this mode message is the one we are interested in.  If so, send specified FSM event.
+        if (!String.IsNullOrEmpty(modeName) && e.Name == modeName)
+        {
+            if (!priority.IsNone)
+                priority.Value = e.Priority;
+            
+            Fsm.Event(sendEvent);
+        }
     }
 
 

@@ -13,6 +13,7 @@ var hierarchy =
         [ "PlayerTurnStartMessageEventArgs", "class_player_turn_start_message_event_args.html", null ],
         [ "PlayerVariableMessageEventArgs", "class_player_variable_message_event_args.html", null ],
         [ "ResetMessageEventArgs", "class_reset_message_event_args.html", null ],
+        [ "ShotMessageEventArgs", "class_shot_message_event_args.html", null ],
         [ "SwitchMessageEventArgs", "class_switch_message_event_args.html", null ],
         [ "TimerMessageEventArgs", "class_timer_message_event_args.html", null ],
         [ "TriggerMessageEventArgs", "class_trigger_message_event_args.html", null ]

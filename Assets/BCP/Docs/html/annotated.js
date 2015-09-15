@@ -15,6 +15,7 @@ var annotated =
     [ "PlayerTurnStartMessageEventArgs", "class_player_turn_start_message_event_args.html", "class_player_turn_start_message_event_args" ],
     [ "PlayerVariableMessageEventArgs", "class_player_variable_message_event_args.html", "class_player_variable_message_event_args" ],
     [ "ResetMessageEventArgs", "class_reset_message_event_args.html", "class_reset_message_event_args" ],
+    [ "ShotMessageEventArgs", "class_shot_message_event_args.html", "class_shot_message_event_args" ],
     [ "SwitchMessageEventArgs", "class_switch_message_event_args.html", "class_switch_message_event_args" ],
     [ "TimerMessageEventArgs", "class_timer_message_event_args.html", "class_timer_message_event_args" ],
     [ "TriggerMessageEventArgs", "class_trigger_message_event_args.html", "class_trigger_message_event_args" ]

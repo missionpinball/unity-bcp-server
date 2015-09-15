@@ -1,5 +1,5 @@
 var class_player_turn_start_message_event_args =
 [
-    [ "PlayerTurnStartMessageEventArgs", "class_player_turn_start_message_event_args.html#a7b5a0ea24da1382fa6dc7011e6f91e45", null ],
-    [ "Player", "class_player_turn_start_message_event_args.html#ad1bb28e10b783bfd18cb008e34152ba1", null ]
+    [ "PlayerTurnStartMessageEventArgs", "class_player_turn_start_message_event_args.html#abc335a271044d3c0d8c5744d86b4b01d", null ],
+    [ "PlayerNum", "class_player_turn_start_message_event_args.html#a8fcb57f7fbd78e0bcf8637d7baf4a9f0", null ]
 ];

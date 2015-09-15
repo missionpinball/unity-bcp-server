@@ -17,6 +17,11 @@ public class GetBCPPlayerVariable : FsmStateAction
 
     [RequiredField]
     [UIHint(UIHint.Variable)]
+    [Tooltip("The variable to receive the value of the specified MPF player number variable")]
+    public FsmInt playerNum;
+
+    [RequiredField]
+    [UIHint(UIHint.Variable)]
     [Tooltip("The variable to receive the value of the specified MPF player variable")]
     public FsmString value;
 
@@ -38,6 +43,7 @@ public class GetBCPPlayerVariable : FsmStateAction
     public override void Reset()
     {
         playerVariableName = null;
+        playerNum = null;
         value = null;
         previousValue = null;
         change = null;
@@ -72,6 +78,9 @@ public class GetBCPPlayerVariable : FsmStateAction
         // Determine if this player variable message is the one we are interested in.  If so, send specified FSM event.
         if (!String.IsNullOrEmpty(playerVariableName) && e.Name == playerVariableName)
         {
+            if (!playerNum.IsNone)
+                playerNum.Value = e.PlayerNum;
+
             if (!value.IsNone)
                 value.Value = e.Value;
 
