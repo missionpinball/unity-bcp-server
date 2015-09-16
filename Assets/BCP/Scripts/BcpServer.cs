@@ -20,7 +20,7 @@ public class BcpServer : MonoBehaviour
     /// <summary>
     /// The BCP Server version
     /// </summary>
-    public const string VERSION = "1.01";
+    public const string VERSION = "1.02-dev1";
 
     /// <summary>
     /// The BCP Specification document version implemented
