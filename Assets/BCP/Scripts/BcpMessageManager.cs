@@ -887,7 +887,7 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="message">The "machine_variable" BCP message.</param>
     protected void MachineVariableMessageHandler(BcpMessage message)
     {
-        if (OnPlayerVariable != null)
+        if (OnMachineVariable != null)
         {
             try
             {
