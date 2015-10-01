@@ -1019,8 +1019,15 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="message">The "reset" BCP message.</param>
     protected void ResetMessageHandler(BcpMessage message)
     {
-        if (OnReset != null)
+        // Check if any event handlers are established for the reset command
+        if (OnReset == null)
         {
+            // There are no event handlers, automatically send a Reset Complete command back to the pinball controller
+            BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
+        }
+        else
+        {
+            // Call the reset event handlers
             try
             {
                 OnReset(this, new ResetMessageEventArgs(message, (message.Parameters["hard"] == null) ? false : bool.Parse(message.Parameters["hard"])));
