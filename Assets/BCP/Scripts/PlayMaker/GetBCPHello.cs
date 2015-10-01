@@ -15,6 +15,14 @@ public class GetBCPHello : FsmStateAction
     public FsmString version;
 
     [UIHint(UIHint.Variable)]
+    [Tooltip("The variable to receive the value of the controller name from the 'hello' command")]
+    public FsmString controllerName;
+
+    [UIHint(UIHint.Variable)]
+    [Tooltip("The variable to receive the value of the controller version from the 'hello' command")]
+    public FsmString controllerVersion;
+
+    [UIHint(UIHint.Variable)]
     [Tooltip("The PlayMaker event to send when an MPF 'hello' command is received")]
     public FsmEvent sendEvent;
 
@@ -24,6 +32,8 @@ public class GetBCPHello : FsmStateAction
     public override void Reset()
     {
         version = null;
+        controllerName = null;
+        controllerVersion = null;
         sendEvent = null;
     }
 
@@ -52,7 +62,15 @@ public class GetBCPHello : FsmStateAction
     /// <param name="e">The <see cref="HelloMessageEventArgs"/> instance containing the event data.</param>
     public void Hello(object sender, HelloMessageEventArgs e)
     {
-        version.Value = e.Version;
+        if (!version.IsNone)
+            version.Value = e.Version;
+
+        if (!controllerName.IsNone)
+            controllerName.Value = e.ControllerName;
+
+        if (!controllerVersion.IsNone)
+            controllerVersion.Value = e.ControllerVersion;
+
         Fsm.Event(sendEvent);
     }
 

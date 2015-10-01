@@ -15,7 +15,6 @@ public class GetBCPModeStart : FsmStateAction
     [Tooltip("The name of the MPF mode to listen for")]
     public string modeName;
 
-    [RequiredField]
     [UIHint(UIHint.Variable)]
     [Tooltip("The variable to receive the value of the priority for the specified mode")]
     public FsmInt priority;
@@ -62,7 +61,9 @@ public class GetBCPModeStart : FsmStateAction
         // Determine if this mode message is the one we are interested in.  If so, send specified FSM event.
         if (!String.IsNullOrEmpty(modeName) && e.Name == modeName)
         {
-            priority.Value = e.Priority;
+            if (!priority.IsNone)
+                priority.Value = e.Priority;
+
 			Fsm.Event(sendEvent);
 		}
     }

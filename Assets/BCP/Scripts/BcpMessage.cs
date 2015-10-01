@@ -91,12 +91,16 @@ public class BcpMessage
     /// Creates a new hello message.
     /// </summary>
     /// <param name="version">The BCP protocol version implemented.</param>
+    /// <param name="controllerName">The name of the controller sending the message.</param>
+    /// <param name="controllerVersion">The version of the controller sending the message.</param>
     /// <returns></returns>
-    public static BcpMessage HelloMessage(string version)
+    public static BcpMessage HelloMessage(string version, string controllerName, string controllerVersion)
     {
         BcpMessage message = new BcpMessage();
         message.Command = "hello";
         message.Parameters.Add("version", version);
+        message.Parameters.Add("controller_name", controllerName);
+        message.Parameters.Add("controller_version", controllerVersion);
         return message;
     }
 
@@ -110,6 +114,17 @@ public class BcpMessage
 		message.Command = "goodbye";
 		return message;
 	}
+
+    /// <summary>
+    /// Creates a new reset complete message.
+    /// </summary>
+    /// <returns></returns>
+    public static BcpMessage ResetCompleteMessage()
+    {
+        BcpMessage message = new BcpMessage();
+        message.Command = "reset_complete";
+        return message;
+    }
 	
 	/// <summary>
     /// Creates a new error message.

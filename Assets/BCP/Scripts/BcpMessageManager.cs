@@ -145,6 +145,13 @@ public class BcpMessageManager : MonoBehaviour
     public delegate void PlayerVariableMessageEventHandler(object sender, PlayerVariableMessageEventArgs e);
 
     /// <summary>
+    /// Represents the method that will handle a 'machine_variable' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="MachineVariableMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void MachineVariableMessageEventHandler(object sender, MachineVariableMessageEventArgs e);
+
+    /// <summary>
     /// Represents the method that will handle a 'switch' BCP message event.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -257,6 +264,12 @@ public class BcpMessageManager : MonoBehaviour
     /// to the media controller any time they change.
     /// </summary>
     public static event PlayerVariableMessageEventHandler OnPlayerVariable;
+
+    /// <summary>
+    /// Occurs when a "machine_variable" BCP message is received.  This is a generic "catch all" which sends machine variables 
+    /// to the media controller any time they change.
+    /// </summary>
+    public static event MachineVariableMessageEventHandler OnMachineVariable;
 
     /// <summary>
     /// Occurs when a "switch" BCP message is received.  This message is used to send switch inputs to things like video modes, high 
@@ -384,6 +397,7 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("player_turn_start", PlayerTurnStartMessageHandler);
         SetMessageCallback("player_variable", PlayerVariableMessageHandler);
         SetMessageCallback("player_score", PlayerScoreMessageHandler);
+        SetMessageCallback("machine_variable", MachineVariableMessageHandler);
         SetMessageCallback("switch", SwitchMessageHandler);
         SetMessageCallback("shot", ShotMessageHandler);
         SetMessageCallback("trigger", TriggerMessageHandler);
@@ -620,35 +634,36 @@ public class BcpMessageManager : MonoBehaviour
     /// Internal message handler for all "hello" messages. Raises the <see cref="OnHello"/> event.
     /// </summary>
     /// <param name="message">The "hello" BCP message.</param>
-    protected void HelloMessageHandler(BcpMessage message) {
+    protected void HelloMessageHandler(BcpMessage message)
+    {
+        try
+        {
+            string version = message.Parameters["version"] ?? String.Empty;
+            if (String.IsNullOrEmpty(version))
+                throw new Exception("'hello' message did not contain a valid value for the 'version' parameter");
 
-        string version = message.Parameters["version"] ?? String.Empty;
-        if (String.IsNullOrEmpty(version))
-        {
-            BcpLogger.Trace("ERROR: 'hello' message did not contain a valid value for the 'version' parameter");
-            BcpServer.Instance.Send(BcpMessage.ErrorMessage("The 'hello' message did not contain a valid value for the 'version' parameter", message.RawMessage, message.Id));
-        }
-        else
-        {
+            string controllerName = message.Parameters["controller_name"] ?? String.Empty;
+            string controllerVersion = message.Parameters["controller_version"] ?? String.Empty;
+
             if (version == BCP_VERSION)
-                BcpServer.Instance.Send(BcpMessage.HelloMessage(BCP_VERSION));
+                BcpServer.Instance.Send(BcpMessage.HelloMessage(BCP_VERSION, BcpServer.CONTROLLER_NAME, BcpServer.CONTROLLER_VERSION));
             else
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("unknown protocol version", message.RawMessage, message.Id));
+                throw new Exception("'hello' message received an unknown protocol version");
+
+            // Raise the OnHello event by invoking the delegate. Pass in 
+            // the object that initated the event (this) as well as the BcpMessage. 
+            if (OnHello != null)
+            {
+                OnHello(this, new HelloMessageEventArgs(message, version, controllerName, controllerVersion));
+            }
+
+        }
+        catch (Exception e)
+        {
+            BcpLogger.Trace("ERROR: " + e.Message);
+            BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
         }
 
-        // Raise the OnHello event by invoking the delegate. Pass in 
-        // the object that initated the event (this) as well as the BcpMessage. 
-        if (OnHello != null)
-        {
-            try
-            {
-                OnHello(this, new HelloMessageEventArgs(message, version));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
 	}
 
     /// <summary>
@@ -865,6 +880,34 @@ public class BcpMessageManager : MonoBehaviour
         }
     }
 
+
+    /// <summary>
+    /// Internal message handler for all "machine_variable" messages. Raises the <see cref="OnMachineVariable"/> event.
+    /// </summary>
+    /// <param name="message">The "machine_variable" BCP message.</param>
+    protected void MachineVariableMessageHandler(BcpMessage message)
+    {
+        if (OnPlayerVariable != null)
+        {
+            try
+            {
+                string name = message.Parameters["name"];
+                if (String.IsNullOrEmpty(name))
+                    throw new ArgumentException("Message parameter value expected", "name");
+
+                string value = message.Parameters["value"];
+                if (String.IsNullOrEmpty(value))
+                    throw new ArgumentException("Message parameter value expected", "value");
+
+                OnMachineVariable(this, new MachineVariableMessageEventArgs(message, name, value));
+
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
+    }
 
     /// <summary>
     /// Internal message handler for all "switch" messages. Raises the <see cref="OnSwitch"/> event.
@@ -1125,14 +1168,28 @@ public class HelloMessageEventArgs : BcpMessageEventArgs
     public string Version { get; set; }
 
     /// <summary>
+    /// Gets or sets the name of the controller that is sending the message.
+    /// </summary>
+    public string ControllerName { get; set; }
+
+    /// <summary>
+    /// Gets or sets the version of the controller that is sending the message.
+    /// </summary>
+    public string ControllerVersion { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="HelloMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
     /// <param name="version">The BCP message protocol version.</param>
-    public HelloMessageEventArgs(BcpMessage bcpMessage, string version) :
+    /// <param name="controllerName">The name of the controller.</param>
+    /// <param name="controllerVersion">The version of the controller.</param>
+    public HelloMessageEventArgs(BcpMessage bcpMessage, string version, string controllerName, string controllerVersion) :
         base(bcpMessage)
     {
         this.Version = version;
+        this.ControllerName = controllerName;
+        this.ControllerVersion = controllerVersion;
     }
 }
 
@@ -1430,6 +1487,42 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
         this.Value = value;
         this.PreviousValue = previousValue;
         this.Change = change;
+    }
+}
+
+
+/// <summary>
+/// Event arguments for the "machine_variable" BCP message.
+/// </summary>
+public class MachineVariableMessageEventArgs : BcpMessageEventArgs
+{
+    /// <summary>
+    /// Gets or sets the machine variable name.
+    /// </summary>
+    /// <value>
+    /// The machine variable name.
+    /// </value>
+    public string Name { get; set; }
+
+    /// <summary>
+    /// Gets or sets the machine variable value.
+    /// </summary>
+    /// <value>
+    /// The machine variable value.
+    /// </value>
+    public string Value { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="MachineVariableMessageEventArgs"/> class.
+    /// </summary>
+    /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="name">The player variable name.</param>
+    /// <param name="value">The player variable value.</param>
+    public MachineVariableMessageEventArgs(BcpMessage bcpMessage, string name, string value) :
+        base(bcpMessage)
+    {
+        this.Name = name;
+        this.Value = value;
     }
 }
 
