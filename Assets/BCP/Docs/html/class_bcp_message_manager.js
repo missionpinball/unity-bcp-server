@@ -14,6 +14,8 @@ var class_bcp_message_manager =
     [ "GoodbyeMessageHandler", "class_bcp_message_manager.html#ada26476472fdcc88c6c6232d8ce2841e", null ],
     [ "HelloMessageEventHandler", "class_bcp_message_manager.html#a3dfff631865d0f3a13594bf94f87cd3b", null ],
     [ "HelloMessageHandler", "class_bcp_message_manager.html#a7d936da7b999f348aecae27be6a4d62b", null ],
+    [ "MachineVariableMessageEventHandler", "class_bcp_message_manager.html#ace82fb82b4e617556bbeb0d4b69fd499", null ],
+    [ "MachineVariableMessageHandler", "class_bcp_message_manager.html#a0d9983cad666a62bd14fd1b01011ece2", null ],
     [ "ModeStartMessageEventHandler", "class_bcp_message_manager.html#ac22c478b554491e418e4d86a452f322e", null ],
     [ "ModeStartMessageHandler", "class_bcp_message_manager.html#a3f56e69f6a3224a0498f3862a08a9983", null ],
     [ "ModeStopMessageEventHandler", "class_bcp_message_manager.html#a9cdfc3c8b8352d983875ebc1491ee63f", null ],

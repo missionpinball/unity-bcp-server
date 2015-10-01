@@ -6,6 +6,7 @@ var hierarchy =
         [ "BallStartMessageEventArgs", "class_ball_start_message_event_args.html", null ],
         [ "ErrorMessageEventArgs", "class_error_message_event_args.html", null ],
         [ "HelloMessageEventArgs", "class_hello_message_event_args.html", null ],
+        [ "MachineVariableMessageEventArgs", "class_machine_variable_message_event_args.html", null ],
         [ "ModeStartMessageEventArgs", "class_mode_start_message_event_args.html", null ],
         [ "ModeStopMessageEventArgs", "class_mode_stop_message_event_args.html", null ],
         [ "PlayerAddedMessageEventArgs", "class_player_added_message_event_args.html", null ],

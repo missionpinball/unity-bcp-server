@@ -8,6 +8,7 @@ var annotated =
     [ "BcpServer", "class_bcp_server.html", "class_bcp_server" ],
     [ "ErrorMessageEventArgs", "class_error_message_event_args.html", "class_error_message_event_args" ],
     [ "HelloMessageEventArgs", "class_hello_message_event_args.html", "class_hello_message_event_args" ],
+    [ "MachineVariableMessageEventArgs", "class_machine_variable_message_event_args.html", "class_machine_variable_message_event_args" ],
     [ "ModeStartMessageEventArgs", "class_mode_start_message_event_args.html", "class_mode_start_message_event_args" ],
     [ "ModeStopMessageEventArgs", "class_mode_stop_message_event_args.html", "class_mode_stop_message_event_args" ],
     [ "PlayerAddedMessageEventArgs", "class_player_added_message_event_args.html", "class_player_added_message_event_args" ],
