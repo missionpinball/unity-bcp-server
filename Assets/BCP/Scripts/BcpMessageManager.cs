@@ -193,6 +193,27 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="e">The <see cref="TimerMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void TimerMessageEventHandler(object sender, TimerMessageEventArgs e);
 
+    /// <summary>
+    /// Represents the method that will handle a 'tilt' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BcpMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void TiltMessageEventHandler(object sender, BcpMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'slam_tilt' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BcpMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void SlamTiltMessageEventHandler(object sender, BcpMessageEventArgs e);
+
+    /// <summary>
+    /// Represents the method that will handle a 'tilt_warning' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="TiltWarningMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void TiltWarningMessageEventHandler(object sender, TiltWarningMessageEventArgs e);
+
     #endregion
 
     #region Events
@@ -331,6 +352,22 @@ public class BcpMessageManager : MonoBehaviour
     /// </summary>
     public static event TimerMessageEventHandler OnTimer;
 
+    /// <summary>
+    /// Occurs when a "tilt" BCP message is received.  Notifies the media controller that the current player has just tilted.
+    /// </summary>
+    public static event TiltMessageEventHandler OnTilt;
+
+    /// <summary>
+    /// Occurs when a "slam_tilt" BCP message is received.  Notifies the media controller that the current player has just slam tilted.
+    /// </summary>
+    public static event SlamTiltMessageEventHandler OnSlamTilt;
+
+    /// <summary>
+    /// Occurs when a "tilt_warning" BCP message is received.  Notifies the media controller that the current player has just been 
+    /// issued a tilt warning.
+    /// </summary>
+    public static event TiltWarningMessageEventHandler OnTiltWarning;
+
     #endregion
 
 
@@ -407,8 +444,11 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("set", SetMessageHandler);
         SetMessageCallback("get", GetMessageHandler);
         SetMessageCallback("timer", TimerMessageHandler);
+        SetMessageCallback("tilt", TiltMessageHandler);
+        SetMessageCallback("slam_tilt", SlamTiltMessageHandler);
+        SetMessageCallback("tilt_warning", TiltWarningMessageHandler);
 
-		// Setup the socket communications between PC and MC (Unity) (start listening)
+        // Setup the socket communications between PC and MC (Unity) (start listening)
         BcpLogger.Trace("Setting up BCP server (listening on port " + listenerPort.ToString() + ")");
         BcpServer.Instance.Init(listenerPort);
 		
@@ -1106,15 +1146,15 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                string name = message.Parameters["Name"];
+                string name = message.Parameters["name"];
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
 
-                string action = message.Parameters["Action"];
+                string action = message.Parameters["action"];
                 if (String.IsNullOrEmpty(action))
                     throw new ArgumentException("Message parameter value expected", "action");
 
-                int ticks = int.Parse(message.Parameters["Ticks"]);
+                int ticks = int.Parse(message.Parameters["ticks"]);
 
                 OnTimer(this, new TimerMessageEventArgs(message, name, action, ticks));
             }
@@ -1124,6 +1164,69 @@ public class BcpMessageManager : MonoBehaviour
             }
         }
     }
+
+    /// <summary>
+    /// Internal message handler for all "tilt" messages. Raises the <see cref="OnTilt"/> event.
+    /// </summary>
+    /// <param name="message">The "tilt" BCP message.</param>
+    protected void TiltMessageHandler(BcpMessage message)
+    {
+        if (OnTilt != null)
+        {
+            try
+            {
+                OnTilt(this, new BcpMessageEventArgs(message));
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Internal message handler for all "slam_tilt" messages. Raises the <see cref="OnSlamTilt"/> event.
+    /// </summary>
+    /// <param name="message">The "slam_tilt" BCP message.</param>
+    protected void SlamTiltMessageHandler(BcpMessage message)
+    {
+        if (OnSlamTilt != null)
+        {
+            try
+            {
+                OnSlamTilt(this, new BcpMessageEventArgs(message));
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
+    }
+
+    /// <summary>
+    /// Internal message handler for all "tilt_warning" messages. Raises the <see cref="OnTiltWarning"/> event.
+    /// </summary>
+    /// <param name="message">The "tilt_warning" BCP message.</param>
+    protected void TiltWarningMessageHandler(BcpMessage message)
+    {
+        if (OnTiltWarning != null)
+        {
+            try
+            {
+                int warnings = int.Parse(message.Parameters["warnings"]);
+
+                int warningsRemaining = int.Parse(message.Parameters["warnings_remaining"]);
+
+                OnTiltWarning(this, new TiltWarningMessageEventArgs(message, warnings, warningsRemaining));
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
+    }
+
+
 
 }
 
@@ -1720,6 +1823,43 @@ public class TimerMessageEventArgs : BcpMessageEventArgs
         this.Name = name;
         this.Action = action;
         this.Ticks = ticks;
+    }
+
+}
+
+
+/// <summary>
+/// Event arguments for the "tilt_warning" BCP message.
+/// </summary>
+public class TiltWarningMessageEventArgs : BcpMessageEventArgs
+{
+    /// <summary>
+    /// Gets or sets the number of tilt warnings.
+    /// </summary>
+    /// <value>
+    /// The tilt warning count.
+    /// </value>
+    public int Warnings { get; set; }
+
+    /// <summary>
+    /// Gets or sets the number of tilt warnings remaining before a tilt.
+    /// </summary>
+    /// <value>
+    /// The number of tilt warnings remaining before a tilt.
+    /// </value>
+    public int WarningsRemaining { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="TiltWarningMessageEventArgs"/> class.
+    /// </summary>
+    /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="warnings">The number of tilt warnings.</param>
+    /// <param name="warningsRemaining">The number of tilt warnings remaining before a tilt.</param>
+    public TiltWarningMessageEventArgs(BcpMessage bcpMessage, int warnings, int warningsRemaining) :
+        base(bcpMessage)
+    {
+        this.Warnings = warnings;
+        this.WarningsRemaining = warningsRemaining;
     }
 
 }
