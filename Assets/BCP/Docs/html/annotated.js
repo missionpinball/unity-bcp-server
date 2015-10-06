@@ -18,6 +18,7 @@ var annotated =
     [ "ResetMessageEventArgs", "class_reset_message_event_args.html", "class_reset_message_event_args" ],
     [ "ShotMessageEventArgs", "class_shot_message_event_args.html", "class_shot_message_event_args" ],
     [ "SwitchMessageEventArgs", "class_switch_message_event_args.html", "class_switch_message_event_args" ],
+    [ "TiltWarningMessageEventArgs", "class_tilt_warning_message_event_args.html", "class_tilt_warning_message_event_args" ],
     [ "TimerMessageEventArgs", "class_timer_message_event_args.html", "class_timer_message_event_args" ],
     [ "TriggerMessageEventArgs", "class_trigger_message_event_args.html", "class_trigger_message_event_args" ]
 ];
