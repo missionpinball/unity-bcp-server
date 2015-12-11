@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Backbox Communication Protocol (BCP) Server for Unity
-   &#160;<span id="projectnumber">1.01</span>
+   &#160;<span id="projectnumber">1.02</span>
    </div>
   </td>
  </tr>
@@ -92,12 +92,15 @@ Public Member Functions</h2></td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-static-methods"></a>
 Static Public Member Functions</h2></td></tr>
-<tr class="memitem:ac4da697294d6e8bd6ac4e1e647cedcb6"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#ac4da697294d6e8bd6ac4e1e647cedcb6">HelloMessage</a> (string version)</td></tr>
-<tr class="memdesc:ac4da697294d6e8bd6ac4e1e647cedcb6"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new hello message.  <a href="#ac4da697294d6e8bd6ac4e1e647cedcb6">More...</a><br /></td></tr>
-<tr class="separator:ac4da697294d6e8bd6ac4e1e647cedcb6"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ab0b460362180d1cb94771277d170d58e"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#ab0b460362180d1cb94771277d170d58e">HelloMessage</a> (string version, string controllerName, string controllerVersion)</td></tr>
+<tr class="memdesc:ab0b460362180d1cb94771277d170d58e"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new hello message.  <a href="#ab0b460362180d1cb94771277d170d58e">More...</a><br /></td></tr>
+<tr class="separator:ab0b460362180d1cb94771277d170d58e"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:a0a2625af8d36b60c637d44af7377f0e4"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#a0a2625af8d36b60c637d44af7377f0e4">GoodbyeMessage</a> ()</td></tr>
 <tr class="memdesc:a0a2625af8d36b60c637d44af7377f0e4"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new goodbye message.  <a href="#a0a2625af8d36b60c637d44af7377f0e4">More...</a><br /></td></tr>
 <tr class="separator:a0a2625af8d36b60c637d44af7377f0e4"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a5179dab02cda905831fe2ea956e3e5ec"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#a5179dab02cda905831fe2ea956e3e5ec">ResetCompleteMessage</a> ()</td></tr>
+<tr class="memdesc:a5179dab02cda905831fe2ea956e3e5ec"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new reset complete message.  <a href="#a5179dab02cda905831fe2ea956e3e5ec">More...</a><br /></td></tr>
+<tr class="separator:a5179dab02cda905831fe2ea956e3e5ec"><td class="memSeparator" colspan="2">&#160;</td></tr>
 <tr class="memitem:ae98641da41342be70d8a0fe2d0461418"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#ae98641da41342be70d8a0fe2d0461418">ErrorMessage</a> (string message, string command)</td></tr>
 <tr class="memdesc:ae98641da41342be70d8a0fe2d0461418"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new error message.  <a href="#ae98641da41342be70d8a0fe2d0461418">More...</a><br /></td></tr>
 <tr class="separator:ae98641da41342be70d8a0fe2d0461418"><td class="memSeparator" colspan="2">&#160;</td></tr>
@@ -310,7 +313,7 @@ Public Attributes</h2></td></tr>
 
 </div>
 </div>
-<a class="anchor" id="ac4da697294d6e8bd6ac4e1e647cedcb6"></a>
+<a class="anchor" id="ab0b460362180d1cb94771277d170d58e"></a>
 <div class="memitem">
 <div class="memproto">
 <table class="mlabels">
@@ -321,8 +324,24 @@ Public Attributes</h2></td></tr>
           <td class="memname">static <a class="el" href="class_bcp_message.html">BcpMessage</a> BcpMessage.HelloMessage </td>
           <td>(</td>
           <td class="paramtype">string&#160;</td>
-          <td class="paramname"><em>version</em></td><td>)</td>
+          <td class="paramname"><em>version</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
           <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>controllerName</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>controllerVersion</em>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
         </tr>
       </table>
   </td>
@@ -336,9 +355,37 @@ Public Attributes</h2></td></tr>
 <dl class="params"><dt>Parameters</dt><dd>
   <table class="params">
     <tr><td class="paramname">version</td><td>The BCP protocol version implemented.</td></tr>
+    <tr><td class="paramname">controllerName</td><td>The name of the controller sending the message.</td></tr>
+    <tr><td class="paramname">controllerVersion</td><td>The version of the controller sending the message.</td></tr>
   </table>
   </dd>
 </dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a5179dab02cda905831fe2ea956e3e5ec"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_bcp_message.html">BcpMessage</a> BcpMessage.ResetCompleteMessage </td>
+          <td>(</td>
+          <td class="paramname"></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a new reset complete message. </p>
 <dl class="section return"><dt>Returns</dt><dd></dd></dl>
 
 </div>
@@ -504,7 +551,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_bcp_message.html">BcpMessage</a></li>
-    <li class="footer">Generated on Tue Sep 15 2015 08:45:33 for Backbox Communication Protocol (BCP) Server for Unity by
+    <li class="footer">Generated on Tue Oct 6 2015 16:57:13 for Backbox Communication Protocol (BCP) Server for Unity by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

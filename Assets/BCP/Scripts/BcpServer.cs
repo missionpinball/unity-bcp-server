@@ -20,7 +20,12 @@ public class BcpServer : MonoBehaviour
     /// <summary>
     /// The BCP Server version
     /// </summary>
-    public const string VERSION = "1.01";
+    public const string CONTROLLER_VERSION = "1.02-dev4";
+
+    /// <summary>
+    /// The BCP Server name
+    /// </summary>
+    public const string CONTROLLER_NAME = "Unity Media Controller";
 
     /// <summary>
     /// The BCP Specification document version implemented
@@ -101,7 +106,7 @@ public class BcpServer : MonoBehaviour
 	public void Init(int port)
     {
         BcpLogger.Trace("BcpServer: Initializing");
-        BcpLogger.Trace("BcpServer: Server Version " + VERSION);
+        BcpLogger.Trace("BcpServer: " + CONTROLLER_NAME + " " + CONTROLLER_VERSION);
         BcpLogger.Trace("BcpServer: BCP Specification Version " + BCP_SPECIFICATION_VERSION);
 
         // Create TCP/IP socket

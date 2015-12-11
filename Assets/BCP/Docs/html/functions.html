@@ -26,7 +26,7 @@
  <tr style="height: 56px;">
   <td style="padding-left: 0.5em;">
    <div id="projectname">Backbox Communication Protocol (BCP) Server for Unity
-   &#160;<span id="projectnumber">1.01</span>
+   &#160;<span id="projectnumber">1.02</span>
    </div>
   </td>
  </tr>
@@ -75,7 +75,8 @@
       <li><a href="#index_r"><span>r</span></a></li>
       <li><a href="#index_s"><span>s</span></a></li>
       <li><a href="#index_t"><span>t</span></a></li>
-      <li class="current"><a href="#index_v"><span>v</span></a></li>
+      <li><a href="#index_v"><span>v</span></a></li>
+      <li class="current"><a href="#index_w"><span>w</span></a></li>
     </ul>
   </div>
 </div><!-- top -->
@@ -170,6 +171,18 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>ConfigMessageHandler()
 : <a class="el" href="class_bcp_message_manager.html#a3725dbbcef38d40acac31c53cbe15266">BcpMessageManager</a>
 </li>
+<li>CONTROLLER_NAME
+: <a class="el" href="class_bcp_server.html#a0dea8474b12a9828b62ddce32d787443">BcpServer</a>
+</li>
+<li>CONTROLLER_VERSION
+: <a class="el" href="class_bcp_server.html#a70f8914d3f207c7a7b1933d8d6c08299">BcpServer</a>
+</li>
+<li>ControllerName
+: <a class="el" href="class_hello_message_event_args.html#a8bf733679ceee399eb0bd010a65d9a4b">HelloMessageEventArgs</a>
+</li>
+<li>ControllerVersion
+: <a class="el" href="class_hello_message_event_args.html#a05098652e1bdbbb386746919de0209e3">HelloMessageEventArgs</a>
+</li>
 </ul>
 
 
@@ -210,10 +223,10 @@ $(document).ready(function(){initNavTree('functions.html','');});
 : <a class="el" href="class_reset_message_event_args.html#abd4061a82ca2e9e0a29ecc528d253cc3">ResetMessageEventArgs</a>
 </li>
 <li>HelloMessage()
-: <a class="el" href="class_bcp_message.html#ac4da697294d6e8bd6ac4e1e647cedcb6">BcpMessage</a>
+: <a class="el" href="class_bcp_message.html#ab0b460362180d1cb94771277d170d58e">BcpMessage</a>
 </li>
 <li>HelloMessageEventArgs()
-: <a class="el" href="class_hello_message_event_args.html#a7a3731b652d4d3b41580a65470fed907">HelloMessageEventArgs</a>
+: <a class="el" href="class_hello_message_event_args.html#a646967b12fcf7ab9d67ea67b1f121db0">HelloMessageEventArgs</a>
 </li>
 <li>HelloMessageEventHandler()
 : <a class="el" href="class_bcp_message_manager.html#a3dfff631865d0f3a13594bf94f87cd3b">BcpMessageManager</a>
@@ -250,6 +263,15 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 
 <h3><a class="anchor" id="index_m"></a>- m -</h3><ul>
+<li>MachineVariableMessageEventArgs()
+: <a class="el" href="class_machine_variable_message_event_args.html#af296d207940510cd87bfa26272e6b75a">MachineVariableMessageEventArgs</a>
+</li>
+<li>MachineVariableMessageEventHandler()
+: <a class="el" href="class_bcp_message_manager.html#ace82fb82b4e617556bbeb0d4b69fd499">BcpMessageManager</a>
+</li>
+<li>MachineVariableMessageHandler()
+: <a class="el" href="class_bcp_message_manager.html#a0d9983cad666a62bd14fd1b01011ece2">BcpMessageManager</a>
+</li>
 <li>Message
 : <a class="el" href="class_error_message_event_args.html#a50bc025af39e45917a371bb5f7a937b3">ErrorMessageEventArgs</a>
 </li>
@@ -279,7 +301,8 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 <h3><a class="anchor" id="index_n"></a>- n -</h3><ul>
 <li>Name
-: <a class="el" href="class_mode_start_message_event_args.html#a855187b982b897bbbe5a79f06c9b11da">ModeStartMessageEventArgs</a>
+: <a class="el" href="class_machine_variable_message_event_args.html#a845e2ff9aee345d4da5305f11a9b78ff">MachineVariableMessageEventArgs</a>
+, <a class="el" href="class_mode_start_message_event_args.html#a855187b982b897bbbe5a79f06c9b11da">ModeStartMessageEventArgs</a>
 , <a class="el" href="class_mode_stop_message_event_args.html#a60bc45646a6d5a06a3c11e32dfc617a0">ModeStopMessageEventArgs</a>
 , <a class="el" href="class_player_variable_message_event_args.html#ad6a64e4065da9ec63e9204d9d48b23f4">PlayerVariableMessageEventArgs</a>
 , <a class="el" href="class_shot_message_event_args.html#a7726ec28ae09bd8a2c305c87c9a0327d">ShotMessageEventArgs</a>
@@ -315,6 +338,9 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>OnHello
 : <a class="el" href="class_bcp_message_manager.html#af1fb92d66d705101818acc2021d35195">BcpMessageManager</a>
 </li>
+<li>OnMachineVariable
+: <a class="el" href="class_bcp_message_manager.html#a3c2724015f5ed9e8de9a0a5133d628be">BcpMessageManager</a>
+</li>
 <li>OnMessage
 : <a class="el" href="class_bcp_message_manager.html#ab4bf1aba1110b80ee32072a495261a5c">BcpMessageManager</a>
 </li>
@@ -345,8 +371,17 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>OnShot
 : <a class="el" href="class_bcp_message_manager.html#a9147beab3f599d4b9c378dbd467eba25">BcpMessageManager</a>
 </li>
+<li>OnSlamTilt
+: <a class="el" href="class_bcp_message_manager.html#ae8f8c79d4c0489bbf91a4bb3cbd92dd5">BcpMessageManager</a>
+</li>
 <li>OnSwitch
 : <a class="el" href="class_bcp_message_manager.html#ad6fc0a233d70801902cafa40ae222e06">BcpMessageManager</a>
+</li>
+<li>OnTilt
+: <a class="el" href="class_bcp_message_manager.html#ae7d445c7dd4fcf4d1c367d9105405e10">BcpMessageManager</a>
+</li>
+<li>OnTiltWarning
+: <a class="el" href="class_bcp_message_manager.html#ae388130ec3d5f1d05705bb08d54cafc0">BcpMessageManager</a>
 </li>
 <li>OnTimer
 : <a class="el" href="class_bcp_message_manager.html#a0796bebb341969ad238a9d81857c4cb0">BcpMessageManager</a>
@@ -424,8 +459,11 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>RawMessage
 : <a class="el" href="class_bcp_message.html#a366d87ee77fe25db785a971389440654">BcpMessage</a>
 </li>
+<li>ResetCompleteMessage()
+: <a class="el" href="class_bcp_message.html#a5179dab02cda905831fe2ea956e3e5ec">BcpMessage</a>
+</li>
 <li>ResetMessageEventArgs()
-: <a class="el" href="class_reset_message_event_args.html#a51d43bc3e6280a010e550a8f62b04365">ResetMessageEventArgs</a>
+: <a class="el" href="class_reset_message_event_args.html#abcfaa2a26bb9d874221a081a736b4ac8">ResetMessageEventArgs</a>
 </li>
 <li>ResetMessageEventHandler()
 : <a class="el" href="class_bcp_message_manager.html#ab395c6b42cd50dab2c3b260711c7fe9d">BcpMessageManager</a>
@@ -461,6 +499,12 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <li>ShotMessageHandler()
 : <a class="el" href="class_bcp_message_manager.html#ab6898623c31befe37aa5701c95365cd4">BcpMessageManager</a>
 </li>
+<li>SlamTiltMessageEventHandler()
+: <a class="el" href="class_bcp_message_manager.html#a50e9abc9375402c4808d0b8214621c61">BcpMessageManager</a>
+</li>
+<li>SlamTiltMessageHandler()
+: <a class="el" href="class_bcp_message_manager.html#a726dc229bc183a265c18f34087e46dbc">BcpMessageManager</a>
+</li>
 <li>State
 : <a class="el" href="class_shot_message_event_args.html#a3a24499db3ed3a3ec3cfe27f3c235da8">ShotMessageEventArgs</a>
 </li>
@@ -485,6 +529,21 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <h3><a class="anchor" id="index_t"></a>- t -</h3><ul>
 <li>Ticks
 : <a class="el" href="class_timer_message_event_args.html#a35f8c1f4a1aff4b68512779d9424a447">TimerMessageEventArgs</a>
+</li>
+<li>TiltMessageEventHandler()
+: <a class="el" href="class_bcp_message_manager.html#a8d82efbd30123f7288b6cf2b39680638">BcpMessageManager</a>
+</li>
+<li>TiltMessageHandler()
+: <a class="el" href="class_bcp_message_manager.html#a88ed34ac80ee68d2caf73ab0b266d364">BcpMessageManager</a>
+</li>
+<li>TiltWarningMessageEventArgs()
+: <a class="el" href="class_tilt_warning_message_event_args.html#a02384f2ec39a98004ef6c385626e6910">TiltWarningMessageEventArgs</a>
+</li>
+<li>TiltWarningMessageEventHandler()
+: <a class="el" href="class_bcp_message_manager.html#a550ee6011d33579fbd3be463a186c713">BcpMessageManager</a>
+</li>
+<li>TiltWarningMessageHandler()
+: <a class="el" href="class_bcp_message_manager.html#a48d81a1384b22d4cef8fc6589ed5a606">BcpMessageManager</a>
 </li>
 <li>TimerMessageEventArgs()
 : <a class="el" href="class_timer_message_event_args.html#aaa3d609cdc1d6fd2ffde6eda068ec8e2">TimerMessageEventArgs</a>
@@ -518,15 +577,23 @@ $(document).ready(function(){initNavTree('functions.html','');});
 
 <h3><a class="anchor" id="index_v"></a>- v -</h3><ul>
 <li>Value
-: <a class="el" href="class_player_score_message_event_args.html#a92519a92b9feb195978d5c4a34fa04dd">PlayerScoreMessageEventArgs</a>
+: <a class="el" href="class_machine_variable_message_event_args.html#aa78d00a4e02e02862f088b6c2622e2a7">MachineVariableMessageEventArgs</a>
+, <a class="el" href="class_player_score_message_event_args.html#a92519a92b9feb195978d5c4a34fa04dd">PlayerScoreMessageEventArgs</a>
 , <a class="el" href="class_player_variable_message_event_args.html#a00b8aa410f34653f94aa74fa675a7c2b">PlayerVariableMessageEventArgs</a>
 , <a class="el" href="class_switch_message_event_args.html#ac47559dedc70c5d9e76f5501794e4126">SwitchMessageEventArgs</a>
 </li>
-<li>VERSION
-: <a class="el" href="class_bcp_server.html#ad22c1dd17b0b3619e3500736c8b9f35b">BcpServer</a>
-</li>
 <li>Version
 : <a class="el" href="class_hello_message_event_args.html#a1e039568ad7871eb2a3382e9ce19cb4a">HelloMessageEventArgs</a>
+</li>
+</ul>
+
+
+<h3><a class="anchor" id="index_w"></a>- w -</h3><ul>
+<li>Warnings
+: <a class="el" href="class_tilt_warning_message_event_args.html#a45747453c1424ea802ab99c4095a3e1e">TiltWarningMessageEventArgs</a>
+</li>
+<li>WarningsRemaining
+: <a class="el" href="class_tilt_warning_message_event_args.html#a542315676ec6c431bcfd1bda0009ff0c">TiltWarningMessageEventArgs</a>
 </li>
 </ul>
 </div><!-- contents -->
@@ -534,7 +601,7 @@ $(document).ready(function(){initNavTree('functions.html','');});
 <!-- start footer part -->
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
-    <li class="footer">Generated on Tue Sep 15 2015 08:45:33 for Backbox Communication Protocol (BCP) Server for Unity by
+    <li class="footer">Generated on Tue Oct 6 2015 16:57:13 for Backbox Communication Protocol (BCP) Server for Unity by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>

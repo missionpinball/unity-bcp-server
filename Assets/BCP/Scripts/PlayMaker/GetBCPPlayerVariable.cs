@@ -17,7 +17,7 @@ public class GetBCPPlayerVariable : FsmStateAction
 
     [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The variable to receive the value of the specified MPF player number variable")]
+    [Tooltip("The variable to receive the value of the specified MPF player variable")]
     public FsmInt playerNum;
 
     [RequiredField]

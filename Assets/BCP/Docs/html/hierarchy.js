@@ -6,6 +6,7 @@ var hierarchy =
         [ "BallStartMessageEventArgs", "class_ball_start_message_event_args.html", null ],
         [ "ErrorMessageEventArgs", "class_error_message_event_args.html", null ],
         [ "HelloMessageEventArgs", "class_hello_message_event_args.html", null ],
+        [ "MachineVariableMessageEventArgs", "class_machine_variable_message_event_args.html", null ],
         [ "ModeStartMessageEventArgs", "class_mode_start_message_event_args.html", null ],
         [ "ModeStopMessageEventArgs", "class_mode_stop_message_event_args.html", null ],
         [ "PlayerAddedMessageEventArgs", "class_player_added_message_event_args.html", null ],
@@ -15,6 +16,7 @@ var hierarchy =
         [ "ResetMessageEventArgs", "class_reset_message_event_args.html", null ],
         [ "ShotMessageEventArgs", "class_shot_message_event_args.html", null ],
         [ "SwitchMessageEventArgs", "class_switch_message_event_args.html", null ],
+        [ "TiltWarningMessageEventArgs", "class_tilt_warning_message_event_args.html", null ],
         [ "TimerMessageEventArgs", "class_timer_message_event_args.html", null ],
         [ "TriggerMessageEventArgs", "class_trigger_message_event_args.html", null ]
       ] ]

@@ -6,6 +6,7 @@ var class_bcp_server =
     [ "Send", "class_bcp_server.html#a952d943ea3f398b687c051c1c30a7973", null ],
     [ "SendDmdFrame", "class_bcp_server.html#a585e498857653601bba8c20f79f385b8", null ],
     [ "BCP_SPECIFICATION_VERSION", "class_bcp_server.html#ab8d8ee79cc7322e718edd528188c7c16", null ],
-    [ "VERSION", "class_bcp_server.html#ad22c1dd17b0b3619e3500736c8b9f35b", null ],
+    [ "CONTROLLER_NAME", "class_bcp_server.html#a0dea8474b12a9828b62ddce32d787443", null ],
+    [ "CONTROLLER_VERSION", "class_bcp_server.html#a70f8914d3f207c7a7b1933d8d6c08299", null ],
     [ "ClientConnected", "class_bcp_server.html#acaaac4c625c95ab45e027113fe6f912a", null ]
 ];
