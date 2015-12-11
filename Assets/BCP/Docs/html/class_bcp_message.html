@@ -113,6 +113,15 @@ Static Public Member Functions</h2></td></tr>
 <tr class="memitem:a1c564a8cd0540d5938826f422c7b7837"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#a1c564a8cd0540d5938826f422c7b7837">TriggerMessage</a> (string name)</td></tr>
 <tr class="memdesc:a1c564a8cd0540d5938826f422c7b7837"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new trigger message.  <a href="#a1c564a8cd0540d5938826f422c7b7837">More...</a><br /></td></tr>
 <tr class="separator:a1c564a8cd0540d5938826f422c7b7837"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a8e73c916c3faa0b847d6a2eacf2d417a"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#a8e73c916c3faa0b847d6a2eacf2d417a">ExternalShowStartMessage</a> (string name, int priority=0, bool blend=true, string leds=&quot;&quot;, string lights=&quot;&quot;, string flashers=&quot;&quot;, string gis=&quot;&quot;)</td></tr>
+<tr class="memdesc:a8e73c916c3faa0b847d6a2eacf2d417a"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates a new external show start message  <a href="#a8e73c916c3faa0b847d6a2eacf2d417a">More...</a><br /></td></tr>
+<tr class="separator:a8e73c916c3faa0b847d6a2eacf2d417a"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:a4b95fdef0782ebb2be91fec2f7b154e2"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#a4b95fdef0782ebb2be91fec2f7b154e2">ExternalShowFrameMessage</a> (string name, string ledData=&quot;&quot;, string lightData=&quot;&quot;, string flasherData=&quot;&quot;, string giData=&quot;&quot;)</td></tr>
+<tr class="memdesc:a4b95fdef0782ebb2be91fec2f7b154e2"><td class="mdescLeft">&#160;</td><td class="mdescRight">Creates an external show frame data message.  <a href="#a4b95fdef0782ebb2be91fec2f7b154e2">More...</a><br /></td></tr>
+<tr class="separator:a4b95fdef0782ebb2be91fec2f7b154e2"><td class="memSeparator" colspan="2">&#160;</td></tr>
+<tr class="memitem:ae5efd334d994bf8968cf9b8673874952"><td class="memItemLeft" align="right" valign="top">static <a class="el" href="class_bcp_message.html">BcpMessage</a>&#160;</td><td class="memItemRight" valign="bottom"><a class="el" href="class_bcp_message.html#ae5efd334d994bf8968cf9b8673874952">ExternalShowStopMessage</a> (string name)</td></tr>
+<tr class="memdesc:ae5efd334d994bf8968cf9b8673874952"><td class="mdescLeft">&#160;</td><td class="mdescRight">Stops the specified external show.  <a href="#ae5efd334d994bf8968cf9b8673874952">More...</a><br /></td></tr>
+<tr class="separator:ae5efd334d994bf8968cf9b8673874952"><td class="memSeparator" colspan="2">&#160;</td></tr>
 </table><table class="memberdecls">
 <tr class="heading"><td colspan="2"><h2 class="groupheader"><a name="pub-attribs"></a>
 Public Attributes</h2></td></tr>
@@ -280,6 +289,183 @@ Public Attributes</h2></td></tr>
     <tr><td class="paramname">message</td><td>The message string.</td></tr>
     <tr><td class="paramname">command</td><td>The command that failed (original raw message text).</td></tr>
     <tr><td class="paramname">id</td><td>The optional message identifier of the original message that failed.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a4b95fdef0782ebb2be91fec2f7b154e2"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_bcp_message.html">BcpMessage</a> BcpMessage.ExternalShowFrameMessage </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>ledData</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>lightData</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>flasherData</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>giData</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates an external show frame data message. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The show name.</td></tr>
+    <tr><td class="paramname">ledData</td><td>The LED data.</td></tr>
+    <tr><td class="paramname">lightData</td><td>The light data.</td></tr>
+    <tr><td class="paramname">flasherData</td><td>The flasher data.</td></tr>
+    <tr><td class="paramname">giData</td><td>The GI data.</td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="a8e73c916c3faa0b847d6a2eacf2d417a"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_bcp_message.html">BcpMessage</a> BcpMessage.ExternalShowStartMessage </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>name</em>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">int&#160;</td>
+          <td class="paramname"><em>priority</em> = <code>0</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">bool&#160;</td>
+          <td class="paramname"><em>blend</em> = <code>true</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>leds</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>lights</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>flashers</em> = <code>&quot;&quot;</code>, </td>
+        </tr>
+        <tr>
+          <td class="paramkey"></td>
+          <td></td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>gis</em> = <code>&quot;&quot;</code>&#160;</td>
+        </tr>
+        <tr>
+          <td></td>
+          <td>)</td>
+          <td></td><td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Creates a new external show start message </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The show name.</td></tr>
+    <tr><td class="paramname">priority</td><td>The show priority.</td></tr>
+    <tr><td class="paramname">blend</td><td></td></tr>
+    <tr><td class="paramname">leds</td><td>A comma-separated list of led names that will be managed by this show.</td></tr>
+    <tr><td class="paramname">lights</td><td>A comma-separated list of light names that will be managed by this show.</td></tr>
+    <tr><td class="paramname">flashers</td><td>A comma-separated list of flasher names that will be managed by this show.</td></tr>
+    <tr><td class="paramname">gis</td><td></td></tr>
+  </table>
+  </dd>
+</dl>
+<dl class="section return"><dt>Returns</dt><dd></dd></dl>
+
+</div>
+</div>
+<a class="anchor" id="ae5efd334d994bf8968cf9b8673874952"></a>
+<div class="memitem">
+<div class="memproto">
+<table class="mlabels">
+  <tr>
+  <td class="mlabels-left">
+      <table class="memname">
+        <tr>
+          <td class="memname">static <a class="el" href="class_bcp_message.html">BcpMessage</a> BcpMessage.ExternalShowStopMessage </td>
+          <td>(</td>
+          <td class="paramtype">string&#160;</td>
+          <td class="paramname"><em>name</em></td><td>)</td>
+          <td></td>
+        </tr>
+      </table>
+  </td>
+  <td class="mlabels-right">
+<span class="mlabels"><span class="mlabel">static</span></span>  </td>
+  </tr>
+</table>
+</div><div class="memdoc">
+
+<p>Stops the specified external show. </p>
+<dl class="params"><dt>Parameters</dt><dd>
+  <table class="params">
+    <tr><td class="paramname">name</td><td>The show name.</td></tr>
   </table>
   </dd>
 </dl>
@@ -551,7 +737,7 @@ Public Attributes</h2></td></tr>
 <div id="nav-path" class="navpath"><!-- id is needed for treeview function! -->
   <ul>
     <li class="navelem"><a class="el" href="class_bcp_message.html">BcpMessage</a></li>
-    <li class="footer">Generated on Tue Oct 6 2015 16:57:13 for Backbox Communication Protocol (BCP) Server for Unity by
+    <li class="footer">Generated on Fri Dec 11 2015 08:53:51 for Backbox Communication Protocol (BCP) Server for Unity by
     <a href="http://www.doxygen.org/index.html">
     <img class="footer" src="doxygen.png" alt="doxygen"/></a> 1.8.9.1 </li>
   </ul>
