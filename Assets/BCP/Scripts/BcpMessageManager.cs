@@ -433,7 +433,6 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("player_added", PlayerAddedMessageHandler);
         SetMessageCallback("player_turn_start", PlayerTurnStartMessageHandler);
         SetMessageCallback("player_variable", PlayerVariableMessageHandler);
-        SetMessageCallback("player_score", PlayerScoreMessageHandler);
         SetMessageCallback("machine_variable", MachineVariableMessageHandler);
         SetMessageCallback("switch", SwitchMessageHandler);
         SetMessageCallback("shot", ShotMessageHandler);
@@ -748,8 +747,8 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int playerNum = int.Parse(message.Parameters["player_num"]);
-                int ball = int.Parse(message.Parameters["ball"]);
+                int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
+                int ball = int.Parse(message.Parameters["ball"].Replace("int:", ""));
                 OnBallStart(this, new BallStartMessageEventArgs(message, playerNum, ball));
             }
             catch (Exception e)
@@ -784,7 +783,7 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
 
-                int priority = int.Parse(message.Parameters["priority"]);
+                int priority = int.Parse(message.Parameters["priority"].Replace("int:", ""));
 
                 OnModeStart(this, new ModeStartMessageEventArgs(message, name, priority));
             }
@@ -828,7 +827,7 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int playerNum = int.Parse(message.Parameters["player_num"]);
+                int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
                 OnPlayerAdded(this, new PlayerAddedMessageEventArgs(message, playerNum));
             }
             catch (Exception e)
@@ -848,7 +847,7 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int playerNum = int.Parse(message.Parameters["player_num"]);
+                int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
                 OnPlayerTurnStart(this, new PlayerTurnStartMessageEventArgs(message, playerNum));
             }
             catch (Exception e)
@@ -868,7 +867,7 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int playerNum = int.Parse(message.Parameters["player_num"]);
+                int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
                 
                 string name = message.Parameters["name"];
                 if (String.IsNullOrEmpty(name))
@@ -888,6 +887,16 @@ public class BcpMessageManager : MonoBehaviour
 
                 OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
 
+                // Send an additional special notification for player score (the player_score message has been removed from the BCP spec)
+                if (name == "score")
+                {
+                    int scoreValue = int.Parse(message.Parameters["value"].Replace("int:", ""));
+                    int scorePreviousValue = int.Parse(message.Parameters["prev_value"].Replace("int:", ""));
+                    int scoreChange = int.Parse(message.Parameters["change"].Replace("int:", ""));
+
+                    OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, playerNum, scoreValue, scorePreviousValue, scoreChange));
+                }
+
             }
             catch (Exception e)
             {
@@ -895,31 +904,6 @@ public class BcpMessageManager : MonoBehaviour
             }
         }
     }
-
-    /// <summary>
-    /// Internal message handler for all "player_score" messages. Raises the <see cref="OnPlayerScore"/> event.
-    /// </summary>
-    /// <param name="message">The "player_score" BCP message.</param>
-    protected void PlayerScoreMessageHandler(BcpMessage message)
-    {
-        if (OnPlayerScore != null)
-        {
-            try
-            {
-                int playerNum = int.Parse(message.Parameters["player_num"]);
-                int value = int.Parse(message.Parameters["value"]);
-                int previousValue = int.Parse(message.Parameters["prev_value"]);
-                int change = int.Parse(message.Parameters["change"]);
-
-                OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, playerNum, value, previousValue, change));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
 
     /// <summary>
     /// Internal message handler for all "machine_variable" messages. Raises the <see cref="OnMachineVariable"/> event.
@@ -963,7 +947,7 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
 
-                int value = int.Parse(message.Parameters["value"]);
+                int value = int.Parse(message.Parameters["value"].Replace("int:", ""));
 
                 OnSwitch(this, new SwitchMessageEventArgs(message, name, value));
             }
@@ -1154,7 +1138,7 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(action))
                     throw new ArgumentException("Message parameter value expected", "action");
 
-                int ticks = int.Parse(message.Parameters["ticks"]);
+                int ticks = int.Parse(message.Parameters["ticks"].Replace("int:", ""));
 
                 OnTimer(this, new TimerMessageEventArgs(message, name, action, ticks));
             }
@@ -1213,9 +1197,9 @@ public class BcpMessageManager : MonoBehaviour
         {
             try
             {
-                int warnings = int.Parse(message.Parameters["warnings"]);
+                int warnings = int.Parse(message.Parameters["warnings"].Replace("int:", ""));
 
-                int warningsRemaining = int.Parse(message.Parameters["warnings_remaining"]);
+                int warningsRemaining = int.Parse(message.Parameters["warnings_remaining"].Replace("int:", ""));
 
                 OnTiltWarning(this, new TiltWarningMessageEventArgs(message, warnings, warningsRemaining));
             }
