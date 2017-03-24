@@ -15,17 +15,45 @@ public class GetBCPTrigger : FsmStateAction
     [Tooltip("The name of the BCP Trigger to listen for")]
     public string triggerName;
 
+    [RequiredField]
+    [UIHint(UIHint.Variable)]
+    [Tooltip("Whether or not to automatically register the trigger name with MPF")]
+    public bool autoRegisterTriggerName;
+
     [UIHint(UIHint.Variable)]
     [Tooltip("The PlayMaker event to send when the specified BCP Trigger is received")]
     public FsmEvent sendEvent;
+
+    private bool registered;
 
     /// <summary>
     /// Resets this instance to default values.
     /// </summary>
     public override void Reset()
     {
+        base.Reset();
         triggerName = null;
+        autoRegisterTriggerName = true;
         sendEvent = null;
+        registered = false;
+    }
+
+    /// <summary>
+    /// Called after the action is loaded.
+    /// </summary>
+    public override void Awake()
+    {
+        base.Awake();
+
+        // Auto-register the trigger name with the pin controller (if necessary)
+        if (autoRegisterTriggerName && !registered)
+        {
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
+            registered = true;
+        }
+
+        // Register the trigger name with MPF so events will be sent via BCP
+        BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
     }
 
     /// <summary>

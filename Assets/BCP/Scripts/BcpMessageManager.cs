@@ -56,7 +56,7 @@ public class BcpMessageManager : MonoBehaviour
     /// <summary>
     /// The BCP Message Protocol version implemented by the BCP Server.
     /// </summary>
-	public const string BCP_VERSION = "1.0";
+	public const string BCP_VERSION = "1.1";
 
     // Variables available to be edited in the Unity editor/object inspector
     
@@ -69,6 +69,32 @@ public class BcpMessageManager : MonoBehaviour
     /// The message queue size (maximum number of messages that can be queued for processing).
     /// </summary>
     public int messageQueueSize = 100;
+
+    [Header("Registered BCP Messsages")]
+    [Tooltip("Send all machine variables and their changes from MPF via BCP")]
+    public bool machineVariables = true;
+
+    [Tooltip("Send all player variables and their changes from MPF via BCP (includes player score)")]
+    public bool playerVariables = true;
+
+    [Tooltip("Send all switch messages from MPF via BCP")]
+    public bool switches = true;
+
+    [Tooltip("Send all mode messages (start, stop) from MPF via BCP")]
+    public bool modes = true;
+
+    [Tooltip("Send all core messages (ball, player turn, etc.) from MPF via BCP")]
+    public bool coreEvents = true;
+
+    [Tooltip("Send all tilt messages from MPF via BCP")]
+    public bool tilt = true;
+
+    [Tooltip("Comma-separated list of timer names to register with MPF")]
+    public string timers = String.Empty;
+
+    [TextArea(3, 10)]
+    [Tooltip("Comma-separated list of additional trigger names to register with MPF")]
+    public string additionalTriggers = String.Empty;
 
 
     #region Event Handling Delegates
@@ -157,13 +183,6 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="sender">The sender.</param>
     /// <param name="e">The <see cref="SwitchMessageEventArgs"/> instance containing the event message data.</param>
     public delegate void SwitchMessageEventHandler(object sender, SwitchMessageEventArgs e);
-
-    /// <summary>
-    /// Represents the method that will handle a 'shot' BCP message event.
-    /// </summary>
-    /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="SwitchMessageEventArgs"/> instance containing the event message data.</param>
-    public delegate void ShotMessageEventHandler(object sender, ShotMessageEventArgs e);
 
     /// <summary>
     /// Represents the method that will handle a 'trigger' BCP message event.
@@ -303,11 +322,6 @@ public class BcpMessageManager : MonoBehaviour
     public static event SwitchMessageEventHandler OnSwitch;
 
     /// <summary>
-    /// Occurs when a "shot" BCP message is received.  This message indicates that a shot was just hit.
-    /// </summary>
-    public static event ShotMessageEventHandler OnShot;
-
-    /// <summary>
     /// Occurs when a "trigger" BCP message is received.  This message allows the one side to trigger the other side to do something. 
     /// For example, the pin controller might send trigger commands to tell the media controller to start shows, play sound effects, 
     /// or update the display. The media controller might send a trigger to the pin controller to flash the strobes at the down beat 
@@ -319,11 +333,6 @@ public class BcpMessageManager : MonoBehaviour
     /// Occurs when a "reset" BCP message is received.
     /// </summary>
     public static event ResetMessageEventHandler OnReset;
-
-    /// <summary>
-    /// Occurs when a "config" BCP message is received.  
-    /// </summary>
-    public static event ConfigMessageEventHandler OnConfig;
 
     /// <summary>
     /// Occurs when a "set" BCP message is received.  Tells the other side to set the value of one or more variables. For sanity 
@@ -435,22 +444,15 @@ public class BcpMessageManager : MonoBehaviour
         SetMessageCallback("player_variable", PlayerVariableMessageHandler);
         SetMessageCallback("machine_variable", MachineVariableMessageHandler);
         SetMessageCallback("switch", SwitchMessageHandler);
-        SetMessageCallback("shot", ShotMessageHandler);
         SetMessageCallback("trigger", TriggerMessageHandler);
         SetMessageCallback("error", ErrorMessageHandler);
         SetMessageCallback("reset", ResetMessageHandler);
-        SetMessageCallback("config", ConfigMessageHandler);
-        SetMessageCallback("set", SetMessageHandler);
-        SetMessageCallback("get", GetMessageHandler);
-        SetMessageCallback("timer", TimerMessageHandler);
-        SetMessageCallback("tilt", TiltMessageHandler);
         SetMessageCallback("slam_tilt", SlamTiltMessageHandler);
         SetMessageCallback("tilt_warning", TiltWarningMessageHandler);
 
         // Setup the socket communications between PC and MC (Unity) (start listening)
         BcpLogger.Trace("Setting up BCP server (listening on port " + listenerPort.ToString() + ")");
         BcpServer.Instance.Init(listenerPort);
-		
 	}
 
 	
@@ -536,6 +538,43 @@ public class BcpMessageManager : MonoBehaviour
 			}
 		}
 	}
+
+    /// <summary>
+    /// Registers the events in MPF that will be sent via BCP.
+    /// </summary>
+    protected void RegisterMonitorsAndTriggers()
+    {
+        if (machineVariables) BcpServer.Instance.Send(BcpMessage.MonitorMachineVarsMessage());
+        if (playerVariables) BcpServer.Instance.Send(BcpMessage.MonitorPlayerVarsMessage());
+        if (switches) BcpServer.Instance.Send(BcpMessage.MonitorSwitchMessages());
+        if (modes) BcpServer.Instance.Send(BcpMessage.MonitorModeMessages());
+        if (coreEvents) BcpServer.Instance.Send(BcpMessage.MonitorCoreMessages());
+        if (tilt)
+        {
+            BcpMessage.RegisterTriggerMessage("tilt");
+            BcpMessage.RegisterTriggerMessage("tilt_warning");
+            BcpMessage.RegisterTriggerMessage("slam_tilt");
+        }
+        char[] charSeparators = new char[] { ',' };
+
+        // Register timers (timer names stored in a comma-separated list)
+        foreach (string timer in timers.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries))
+        {
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_started", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_paused", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_stopped", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_complete", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_tick", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_time_added", timer.Trim().ToLower())));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(String.Format("timer_{0}_time_subtracted", timer.Trim().ToLower())));
+        }
+
+        // Register additional custom triggers (stored in string in a comma-separated list)
+        foreach (string trigger in additionalTriggers.Split(charSeparators, StringSplitOptions.RemoveEmptyEntries))
+        {
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(trigger.Trim()));
+        }
+    }
 
 
     /// <summary>
@@ -695,6 +734,9 @@ public class BcpMessageManager : MonoBehaviour
             {
                 OnHello(this, new HelloMessageEventArgs(message, version, controllerName, controllerVersion));
             }
+
+            // Register the events that MPF will send via BCP.
+            RegisterMonitorsAndTriggers();
 
         }
         catch (Exception e)
@@ -863,7 +905,7 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="message">The "player_variable" BCP message.</param>
     protected void PlayerVariableMessageHandler(BcpMessage message)
     {
-        if (OnPlayerVariable != null)
+        if (OnPlayerVariable != null || OnPlayerScore != null)
         {
             try
             {
@@ -885,10 +927,11 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(change))
                     throw new ArgumentException("Message parameter value expected", "change");
 
-                OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
+                if (OnPlayerVariable != null)
+                    OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
 
                 // Send an additional special notification for player score (the player_score message has been removed from the BCP spec)
-                if (name == "score")
+                if (name == "score" && OnPlayerScore != null)
                 {
                     int scoreValue = int.Parse(message.Parameters["value"].Replace("int:", ""));
                     int scorePreviousValue = int.Parse(message.Parameters["prev_value"].Replace("int:", ""));
@@ -896,13 +939,13 @@ public class BcpMessageManager : MonoBehaviour
 
                     OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, playerNum, scoreValue, scorePreviousValue, scoreChange));
                 }
-
             }
             catch (Exception e)
             {
                 BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
             }
         }
+
     }
 
     /// <summary>
@@ -947,9 +990,9 @@ public class BcpMessageManager : MonoBehaviour
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
 
-                int value = int.Parse(message.Parameters["value"].Replace("int:", ""));
+                int state = int.Parse(message.Parameters["state"].Replace("int:", ""));
 
-                OnSwitch(this, new SwitchMessageEventArgs(message, name, value));
+                OnSwitch(this, new SwitchMessageEventArgs(message, name, state));
             }
             catch (Exception e)
             {
@@ -959,58 +1002,60 @@ public class BcpMessageManager : MonoBehaviour
     }
 
 
-    /// <summary>
-    /// Internal message handler for all "shot" messages. Raises the <see cref="OnShot"/> event.
-    /// </summary>
-    /// <param name="message">The "shot" BCP message.</param>
-    protected void ShotMessageHandler(BcpMessage message)
-    {
-        if (OnShot != null)
-        {
-            try
-            {
-                string name = message.Parameters["name"];
-                if (String.IsNullOrEmpty(name))
-                    throw new ArgumentException("Message parameter value expected", "name");
-
-                string profile = message.Parameters["profile"];
-                if (String.IsNullOrEmpty(profile))
-                    throw new ArgumentException("Message parameter value expected", "profile");
-
-                string state = message.Parameters["state"];
-                if (String.IsNullOrEmpty(name))
-                    throw new ArgumentException("Message parameter value expected", "state");
-
-                OnShot(this, new ShotMessageEventArgs(message, name, profile, state));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    
     /// <summary>
     /// Internal message handler for all "trigger" messages. Raises the <see cref="OnTrigger"/> event.
     /// </summary>
     /// <param name="message">The "trigger" BCP message.</param>
     protected void TriggerMessageHandler(BcpMessage message)
     {
-        if (OnTrigger != null)
+        try
         {
-            try
-            {
-                string name = message.Parameters["name"];
-                if (String.IsNullOrEmpty(name))
-                    throw new ArgumentException("Message parameter value expected", "name");
+            string name = message.Parameters["name"];
+            if (String.IsNullOrEmpty(name))
+                throw new ArgumentException("Message parameter value expected", "name");
 
-                OnTrigger(this, new TriggerMessageEventArgs(message, name));
-            }
-            catch (Exception e)
+            // Some specialized BCP messages are now sent as triggers and must be pre-processed here
+
+            // Timers
+            if (!String.IsNullOrEmpty(timers))
             {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+                Regex timer_message = new Regex("^timer_(?<name>\\w+)_(?<action>started|stopped|paused|completed|tick|time_added|time_subtracted)");
+                Match match = timer_message.Match(name);
+                if (match.Success)
+                {
+                    TimerMessageHandler(message, match.Groups["name"].ToString(), match.Groups["action"].ToString());
+                    return;
+                }
             }
+
+            // Tilt messages
+            if (name == "tilt")
+            {
+                if (OnTilt != null)
+                    OnTilt(this, new BcpMessageEventArgs(new BcpMessage("tilt")));
+                return;
+            }
+            else if (name == "slam_tilt")
+            {
+                if (OnSlamTilt != null)
+                    OnSlamTilt(this, new BcpMessageEventArgs(new BcpMessage("slam_tilt")));
+                return;
+            }
+            else if (name == "tilt_warning" && OnSlamTilt != null)
+            {
+                int warnings = int.Parse(message.Parameters["warnings"]);
+                int warnings_remaining = int.Parse(message.Parameters["warnings_remaining"]);
+                OnSlamTilt(this, new TiltWarningMessageEventArgs(new BcpMessage("tilt_warning"), warnings, warnings_remaining));
+                return;
+            }
+
+            // Now call trigger message handlers
+            if (OnTrigger != null)
+                OnTrigger(this, new TriggerMessageEventArgs(message, name));
+        }
+        catch (Exception e)
+        {
+            BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
         }
     }
 
@@ -1044,12 +1089,7 @@ public class BcpMessageManager : MonoBehaviour
     protected void ResetMessageHandler(BcpMessage message)
     {
         // Check if any event handlers are established for the reset command
-        if (OnReset == null)
-        {
-            // There are no event handlers, automatically send a Reset Complete command back to the pinball controller
-            BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
-        }
-        else
+        if (OnReset != null)
         {
             // Call the reset event handlers
             try
@@ -1064,102 +1104,38 @@ public class BcpMessageManager : MonoBehaviour
     }
 
     /// <summary>
-    /// Internal message handler for all "config" messages. Raises the <see cref="OnConfig"/> event.
-    /// </summary>
-    /// <param name="message">The "config" BCP message.</param>
-    protected void ConfigMessageHandler(BcpMessage message)
-    {
-        if (OnConfig != null)
-        {
-            try
-            {
-                OnConfig(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Internal message handler for all "set" messages. Raises the <see cref="OnSet"/> event.
-    /// </summary>
-    /// <param name="message">The "set" BCP message.</param>
-    protected void SetMessageHandler(BcpMessage message)
-    {
-        if (OnSet != null)
-        {
-            try
-            {
-                OnSet(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Internal message handler for all "get" messages. Raises the <see cref="OnGet"/> event.
-    /// </summary>
-    /// <param name="message">The "get" BCP message.</param>
-    protected void GetMessageHandler(BcpMessage message)
-    {
-        if (OnGet != null)
-        {
-            try
-            {
-                OnGet(this, new BcpMessageEventArgs(message));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
-
-    /// <summary>
-    /// Internal message handler for all "timer" messages. Raises the <see cref="OnTimer"/> event.
+    /// Internal message handler for all "timer" messages. Raises the <see cref="OnTimer" /> event.
     /// </summary>
     /// <param name="message">The "timer" BCP message.</param>
-    protected void TimerMessageHandler(BcpMessage message)
+    /// <param name="name">The timer name.</param>
+    /// <param name="action">The timer action.</param>
+    /// <exception cref="ArgumentException">
+    /// Message parameter value expected;name
+    /// or
+    /// Message parameter value expected;action
+    /// </exception>
+    protected void TimerMessageHandler(BcpMessage message, string name, string action)
     {
         if (OnTimer != null)
         {
             try
             {
-                string name = message.Parameters["name"];
                 if (String.IsNullOrEmpty(name))
                     throw new ArgumentException("Message parameter value expected", "name");
 
-                string action = message.Parameters["action"];
                 if (String.IsNullOrEmpty(action))
                     throw new ArgumentException("Message parameter value expected", "action");
 
                 int ticks = int.Parse(message.Parameters["ticks"].Replace("int:", ""));
+                int ticks_remaining = int.Parse(message.Parameters["ticks_remaining"].Replace("int:", ""));
 
-                OnTimer(this, new TimerMessageEventArgs(message, name, action, ticks));
-            }
-            catch (Exception e)
-            {
-                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
-            }
-        }
-    }
+                int ticks_added = 0;
+                if (action == "time_added")
+                    ticks_added = int.Parse(message.Parameters["ticks_added"].Replace("int:", ""));
+                else if (action == "time_subtracted")
+                    ticks_added = -int.Parse(message.Parameters["ticks_subtracted"].Replace("int:", ""));
 
-    /// <summary>
-    /// Internal message handler for all "tilt" messages. Raises the <see cref="OnTilt"/> event.
-    /// </summary>
-    /// <param name="message">The "tilt" BCP message.</param>
-    protected void TiltMessageHandler(BcpMessage message)
-    {
-        if (OnTilt != null)
-        {
-            try
-            {
-                OnTilt(this, new BcpMessageEventArgs(message));
+                OnTimer(this, new TimerMessageEventArgs(message, name, action, ticks, ticks_remaining, ticks_added));
             }
             catch (Exception e)
             {
@@ -1635,69 +1611,23 @@ public class SwitchMessageEventArgs : BcpMessageEventArgs
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets or sets the switch value.
+    /// Gets or sets the switch state.
     /// </summary>
     /// <value>
-    /// The switch value.
+    /// The switch state.
     /// </value>
-    public int Value { get; set; }
+    public int State { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SwitchMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
     /// <param name="name">The switch name.</param>
-    /// <param name="value">The switch value.</param>
-    public SwitchMessageEventArgs(BcpMessage bcpMessage, string name, int value) :
+    /// <param name="state">The switch state.</param>
+    public SwitchMessageEventArgs(BcpMessage bcpMessage, string name, int state) :
         base(bcpMessage)
     {
         this.Name = name;
-        this.Value = value;
-    }
-}
-
-
-/// <summary>
-/// Event arguments for the "shot" BCP message.
-/// </summary>
-public class ShotMessageEventArgs : BcpMessageEventArgs
-{
-    /// <summary>
-    /// Gets or sets the shot name.
-    /// </summary>
-    /// <value>
-    /// The switch name.
-    /// </value>
-    public string Name { get; set; }
-
-    /// <summary>
-    /// Gets or sets the shot profile value.
-    /// </summary>
-    /// <value>
-    /// The shot profile value.
-    /// </value>
-    public string Profile { get; set; }
-
-    /// <summary>
-    /// Gets or sets the shot state value.
-    /// </summary>
-    /// <value>
-    /// The shot state value.
-    /// </value>
-    public string State { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="ShotMessageEventArgs"/> class.
-    /// </summary>
-    /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="name">The shot name.</param>
-    /// <param name="profile">The shot profile value.</param>
-    /// <param name="state">The shot state value.</param>
-    public ShotMessageEventArgs(BcpMessage bcpMessage, string name, string profile, string state) :
-        base(bcpMessage)
-    {
-        this.Name = name;
-        this.Profile = profile;
         this.State = state;
     }
 }
@@ -1795,18 +1725,36 @@ public class TimerMessageEventArgs : BcpMessageEventArgs
     public int Ticks { get; set; }
 
     /// <summary>
+    /// Gets or sets the timer ticks remaining.
+    /// </summary>
+    /// <value>
+    /// The timer ticks remaining.
+    /// </value>
+    public int TicksRemaining { get; set; }
+
+    /// <summary>
+    /// Gets or sets the timer ticks added (or subtracted if negative).
+    /// </summary>
+    /// <value>
+    /// The timer ticks added.
+    /// </value>
+    public int TicksAdded { get; set; }
+
+    /// <summary>
     /// Initializes a new instance of the <see cref="TimerMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
     /// <param name="name">The timer name.</param>
     /// <param name="action">The timer action.</param>
     /// <param name="ticks">The timer ticks.</param>
-    public TimerMessageEventArgs(BcpMessage bcpMessage, string name, string action, int ticks) :
+    public TimerMessageEventArgs(BcpMessage bcpMessage, string name, string action, int ticks, int ticks_remaining, int ticks_added=0) :
         base(bcpMessage)
     {
         this.Name = name;
         this.Action = action;
         this.Ticks = ticks;
+        this.TicksRemaining = ticks_remaining;
+        this.TicksAdded = ticks_added;
     }
 
 }

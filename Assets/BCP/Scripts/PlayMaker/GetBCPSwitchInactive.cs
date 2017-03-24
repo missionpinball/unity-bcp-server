@@ -54,7 +54,7 @@ public class GetBCPSwitchInactive : FsmStateAction
     public void Switch(object sender, SwitchMessageEventArgs e)
     {
         // Determine if this switch message is the one we are interested in (name and value equal desired values).  If so, send specified FSM event.
-        if (!String.IsNullOrEmpty(switchName) && e.Name == switchName && e.Value == 0)
+        if (!String.IsNullOrEmpty(switchName) && e.Name == switchName && e.State == 0)
             Fsm.Event(sendEvent);
     }
 
