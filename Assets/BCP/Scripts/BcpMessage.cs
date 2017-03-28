@@ -232,3 +232,93 @@ public class BcpMessage
     }
 
 }
+
+/// <summary>
+/// Custom exception class for BcpMessage-related errors.
+/// </summary>
+public class BcpMessageException : Exception
+{
+    /// <summary>
+    /// The BCP message
+    /// </summary>
+    private BcpMessage _bcpMessage;
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessageException"/> class.
+    /// </summary>
+    public BcpMessageException()
+    {
+        _bcpMessage = null;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessageException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    public BcpMessageException(string message)
+        :base(message)
+    {
+        _bcpMessage = null;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessageException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="bcpMessage">The BCP message.</param>
+    public BcpMessageException(string message, BcpMessage bcpMessage)
+        : base(message)
+    {
+        _bcpMessage = bcpMessage;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessageException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public BcpMessageException(string message, Exception innerException)
+        :base(message, innerException)
+    {
+        _bcpMessage = null;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessageException"/> class.
+    /// </summary>
+    /// <param name="message">The message.</param>
+    /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="innerException">The inner exception.</param>
+    public BcpMessageException(string message, BcpMessage bcpMessage, Exception innerException)
+        : base(message, innerException)
+    {
+        _bcpMessage = bcpMessage;
+    }
+
+    /// <summary>
+    /// Returns a <see cref="System.String" /> that represents this instance.
+    /// </summary>
+    /// <returns>
+    /// A <see cref="System.String" /> that represents this instance.
+    /// </returns>
+    public override string ToString()
+    {
+        StringBuilder description = new StringBuilder();
+        description.AppendFormat("{0}: {1}", this.GetType().Name, this.Message);
+
+        if (_bcpMessage != null)
+            description.Append(" Raw BcpMessage: " + _bcpMessage.ToString());
+
+        if (this.InnerException != null)
+        {
+            description.AppendFormat(" ---> {0}", this.InnerException);
+            description.AppendFormat(
+                "{0}   --- End of inner exception stack trace ---{0}",
+                Environment.NewLine);
+        }
+
+        description.Append(this.StackTrace);
+
+        return description.ToString();
+    }
+}
