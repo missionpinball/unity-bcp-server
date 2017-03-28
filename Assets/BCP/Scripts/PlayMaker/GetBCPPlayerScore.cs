@@ -44,7 +44,7 @@ public class GetBCPPlayerScore : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnPlayerScore += PlayerScore;
+        BcpMessageController.OnPlayerScore += PlayerScore;
     }
 
     /// <summary>
@@ -52,7 +52,7 @@ public class GetBCPPlayerScore : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnPlayerScore -= PlayerScore;
+		BcpMessageController.OnPlayerScore -= PlayerScore;
 		base.OnExit();
     }
 

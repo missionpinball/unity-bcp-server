@@ -39,30 +39,20 @@ public class GetBCPTrigger : FsmStateAction
     }
 
     /// <summary>
-    /// Called after the action is loaded.
-    /// </summary>
-    public override void Awake()
-    {
-        base.Awake();
-
-        // Auto-register the trigger name with the pin controller (if necessary)
-        if (autoRegisterTriggerName && !registered)
-        {
-            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
-            registered = true;
-        }
-
-        // Register the trigger name with MPF so events will be sent via BCP
-        BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
-    }
-
-    /// <summary>
     /// Called when the state becomes active. Adds the MPF BCP Trigger event handler.
     /// </summary>
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnTrigger += Trigger;
+
+        // Auto-register the trigger name with the pin controller (if necessary)
+        if (autoRegisterTriggerName && !String.IsNullOrEmpty(triggerName) && !registered)
+        {
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
+            registered = true;
+        }
+
+        BcpMessageController.OnTrigger += Trigger;
     }
 
     /// <summary>
@@ -70,11 +60,10 @@ public class GetBCPTrigger : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnTrigger -= Trigger;
+		BcpMessageController.OnTrigger -= Trigger;
 		base.OnExit();
     }
-
-
+    
     /// <summary>
     /// Event handler called when a trigger message is received from MPF.
     /// </summary>

@@ -40,7 +40,7 @@ public class GetBCPBallStart : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnBallStart += BallStart;
+        BcpMessageController.OnBallStart += BallStart;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class GetBCPBallStart : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnBallStart -= BallStart;
+		BcpMessageController.OnBallStart -= BallStart;
 		base.OnExit();
     }
 

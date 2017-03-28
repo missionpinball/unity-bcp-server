@@ -43,7 +43,7 @@ public class GetBCPHello : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnHello += Hello;
+        BcpMessageController.OnHello += Hello;
     }
 
     /// <summary>
@@ -51,7 +51,7 @@ public class GetBCPHello : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnHello -= Hello;
+        BcpMessageController.OnHello -= Hello;
         base.OnExit();
     }
 

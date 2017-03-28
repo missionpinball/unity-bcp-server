@@ -28,7 +28,7 @@ public class GetBCPBallEnd : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnBallEnd += BallEnd;
+        BcpMessageController.OnBallEnd += BallEnd;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class GetBCPBallEnd : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnBallEnd -= BallEnd;
+		BcpMessageController.OnBallEnd -= BallEnd;
 		base.OnExit();
     }
 

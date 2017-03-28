@@ -38,7 +38,7 @@ public class GetBCPTiltWarning : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnTiltWarning += TiltWarning;
+        BcpMessageController.OnTiltWarning += TiltWarning;
     }
 
     /// <summary>
@@ -46,7 +46,7 @@ public class GetBCPTiltWarning : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnTiltWarning -= TiltWarning;
+        BcpMessageController.OnTiltWarning -= TiltWarning;
         base.OnExit();
     }
 

@@ -39,7 +39,7 @@ public class GetBCPModeStart : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnModeStart += ModeStart;
+        BcpMessageController.OnModeStart += ModeStart;
     }
 
     /// <summary>
@@ -47,7 +47,7 @@ public class GetBCPModeStart : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnModeStart -= ModeStart;
+		BcpMessageController.OnModeStart -= ModeStart;
 		base.OnExit();
     }
 

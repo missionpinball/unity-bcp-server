@@ -56,7 +56,7 @@ public class GetBCPPlayerVariable : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnPlayerVariable += PlayerVariable;
+        BcpMessageController.OnPlayerVariable += PlayerVariable;
     }
 
     /// <summary>
@@ -64,7 +64,7 @@ public class GetBCPPlayerVariable : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnPlayerVariable -= PlayerVariable;
+		BcpMessageController.OnPlayerVariable -= PlayerVariable;
 		base.OnExit();
     }
 

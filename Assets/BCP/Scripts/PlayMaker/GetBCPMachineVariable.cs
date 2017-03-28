@@ -40,7 +40,7 @@ public class GetBCPMachineVariable : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnMachineVariable += MachineVariable;
+        BcpMessageController.OnMachineVariable += MachineVariable;
     }
 
     /// <summary>
@@ -48,7 +48,7 @@ public class GetBCPMachineVariable : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnMachineVariable -= MachineVariable;
+        BcpMessageController.OnMachineVariable -= MachineVariable;
         base.OnExit();
     }
 

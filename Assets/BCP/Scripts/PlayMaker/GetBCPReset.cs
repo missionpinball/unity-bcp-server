@@ -33,7 +33,7 @@ public class GetBCPReset : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnReset += BcpReset;
+        BcpMessageController.OnReset += BcpReset;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class GetBCPReset : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnReset -= BcpReset;
+        BcpMessageController.OnReset -= BcpReset;
         base.OnExit();
     }
 

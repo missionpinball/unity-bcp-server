@@ -46,7 +46,7 @@ public class GetBCPTimer : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnTimer += Timer;
+        BcpMessageController.OnTimer += Timer;
     }
 
     /// <summary>
@@ -54,7 +54,7 @@ public class GetBCPTimer : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnTimer -= Timer;
+        BcpMessageController.OnTimer -= Timer;
         base.OnExit();
     }
 

@@ -28,7 +28,7 @@ public class GetBCPSlamTilt : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnSlamTilt += SlamTilt;
+        BcpMessageController.OnSlamTilt += SlamTilt;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class GetBCPSlamTilt : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnSlamTilt -= SlamTilt;
+        BcpMessageController.OnSlamTilt -= SlamTilt;
         base.OnExit();
     }
 

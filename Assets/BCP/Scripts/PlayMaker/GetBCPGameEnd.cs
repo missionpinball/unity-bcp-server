@@ -34,7 +34,7 @@ public class GetBCPGameEnd : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnModeStop += ModeStop;
+        BcpMessageController.OnModeStop += ModeStop;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class GetBCPGameEnd : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnModeStop -= ModeStop;
+        BcpMessageController.OnModeStop -= ModeStop;
         base.OnExit();
     }
 

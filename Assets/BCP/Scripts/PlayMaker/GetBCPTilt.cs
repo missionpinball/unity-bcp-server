@@ -28,7 +28,7 @@ public class GetBCPTilt : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnTilt += Tilt;
+        BcpMessageController.OnTilt += Tilt;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class GetBCPTilt : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnTilt -= Tilt;
+        BcpMessageController.OnTilt -= Tilt;
         base.OnExit();
     }
 

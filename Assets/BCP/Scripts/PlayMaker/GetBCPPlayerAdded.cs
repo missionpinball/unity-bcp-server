@@ -34,7 +34,7 @@ public class GetBCPPlayerAdded : FsmStateAction
 	public override void OnEnter()
 	{
 		base.OnEnter();
-		BcpMessageManager.OnPlayerAdded += PlayerAdded;
+		BcpMessageController.OnPlayerAdded += PlayerAdded;
 	}
 	
 	/// <summary>
@@ -42,7 +42,7 @@ public class GetBCPPlayerAdded : FsmStateAction
 	/// </summary>
 	public override void OnExit()
 	{
-		BcpMessageManager.OnPlayerAdded -= PlayerAdded;
+		BcpMessageController.OnPlayerAdded -= PlayerAdded;
 		base.OnExit();
 	}
 	

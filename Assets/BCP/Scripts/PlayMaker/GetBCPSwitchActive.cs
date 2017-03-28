@@ -34,7 +34,7 @@ public class GetBCPSwitchActive : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnSwitch += Switch;
+        BcpMessageController.OnSwitch += Switch;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class GetBCPSwitchActive : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-        BcpMessageManager.OnSwitch -= Switch;
+        BcpMessageController.OnSwitch -= Switch;
         base.OnExit();
     }
 

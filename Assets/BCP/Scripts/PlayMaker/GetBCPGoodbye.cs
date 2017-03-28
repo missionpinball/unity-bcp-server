@@ -28,7 +28,7 @@ public class GetBCPGoodbye : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnGoodbye += Goodbye;
+        BcpMessageController.OnGoodbye += Goodbye;
     }
 
     /// <summary>
@@ -36,7 +36,7 @@ public class GetBCPGoodbye : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnGoodbye -= Goodbye;
+		BcpMessageController.OnGoodbye -= Goodbye;
 		base.OnExit();
     }
 

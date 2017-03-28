@@ -34,7 +34,7 @@ public class GetBCPPlayerTurnStart : FsmStateAction
     public override void OnEnter()
     {
         base.OnEnter();
-        BcpMessageManager.OnPlayerTurnStart += PlayerTurnStart;
+        BcpMessageController.OnPlayerTurnStart += PlayerTurnStart;
     }
 
     /// <summary>
@@ -42,7 +42,7 @@ public class GetBCPPlayerTurnStart : FsmStateAction
     /// </summary>
     public override void OnExit()
     {
-		BcpMessageManager.OnPlayerTurnStart -= PlayerTurnStart;
+		BcpMessageController.OnPlayerTurnStart -= PlayerTurnStart;
 		base.OnExit();
     }
 
