@@ -1136,6 +1136,9 @@ public class BcpMessageController
                 BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
             }
         }
+
+        // A BCP reset message must be responded to with a reset complete
+        BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
     }
 
     /// <summary>

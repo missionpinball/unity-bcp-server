@@ -124,6 +124,15 @@ public class BcpMessage
     }
 
     /// <summary>
+    /// Creates a new reset complete message.
+    /// </summary>
+    /// <returns></returns>
+    public static BcpMessage ResetCompleteMessage()
+    {
+        return new BcpMessage("reset_complete");
+    }
+
+    /// <summary>
     /// Creates a new error message.
     /// </summary>
     /// <param name="message">The message string.</param>
