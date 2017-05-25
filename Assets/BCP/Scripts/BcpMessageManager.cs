@@ -533,6 +533,13 @@ public class BcpMessageController
     public delegate void ResetMessageEventHandler(object sender, ResetMessageEventArgs e);
 
     /// <summary>
+    /// Represents the method that will handle a 'settings' BCP message event.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="SettingsMessageEventArgs"/> instance containing the event message data.</param>
+    public delegate void SettingsMessageEventHandler(object sender, SettingsMessageEventArgs e);
+
+    /// <summary>
     /// Represents the method that will handle a 'config' BCP message event.
     /// </summary>
     /// <param name="sender">The sender.</param>
@@ -669,6 +676,11 @@ public class BcpMessageController
     public static event ResetMessageEventHandler OnReset;
 
     /// <summary>
+    /// Occurs when a "settings" BCP message is received.
+    /// </summary>
+    public static event SettingsMessageEventHandler OnSettings;
+
+    /// <summary>
     /// Occurs when a "timer" BCP message is received.  Notifies the media controller about timer action that needs to be 
     /// communicated to the player. 
     /// </summary>
@@ -732,6 +744,7 @@ public class BcpMessageController
         SetMessageCallback("trigger", TriggerMessageHandler);
         SetMessageCallback("error", ErrorMessageHandler);
         SetMessageCallback("reset", ResetMessageHandler);
+        SetMessageCallback("settings", SettingsMessageHandler);
     }
 
     /// <summary>
@@ -1139,6 +1152,27 @@ public class BcpMessageController
 
         // A BCP reset message must be responded to with a reset complete
         BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
+    }
+
+    /// <summary>
+    /// Internal message handler for all "settings" messages. Raises the <see cref="OnSettings"/> event.
+    /// </summary>
+    /// <param name="message">The "reset" BCP message.</param>
+    protected void SettingsMessageHandler(BcpMessage message)
+    {
+        // Check if any event handlers are established for the settings command
+        if (OnSettings != null)
+        {
+            // Call the settings event handlers
+            try
+            {
+                OnSettings(this, new SettingsMessageEventArgs(message, message.Parameters["json"]));
+            }
+            catch (Exception e)
+            {
+                BcpServer.Instance.Send(BcpMessage.ErrorMessage("An error occurred while processing a '" + message.Command + "' message: " + e.Message, message.RawMessage));
+            }
+        }
     }
 
     /// <summary>
@@ -1735,6 +1769,42 @@ public class ResetMessageEventArgs : BcpMessageEventArgs
         base(bcpMessage)
     {
         this.Hard = false;
+    }
+}
+
+
+/// <summary>
+/// Event arguments for the "settings" BCP message.
+/// </summary>
+public class SettingsMessageEventArgs : BcpMessageEventArgs
+{
+    /// <summary>
+    /// Gets or sets the JSON string.
+    /// </summary>
+    /// <value>
+    /// The JSON string.
+    /// </value>
+    public string JSON { get; set; }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SettingsMessageEventArgs"/> class.
+    /// </summary>
+    /// <param name="bcpMessage">The BCP message.</param>
+    /// <param name="json">JSON string of all settings variables</param>
+    public SettingsMessageEventArgs(BcpMessage bcpMessage, string json) :
+        base(bcpMessage)
+    {
+        this.JSON = json;
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="SettingsMessageEventArgs"/> class.
+    /// </summary>
+    /// <param name="bcpMessage">The BCP message.</param>
+    public SettingsMessageEventArgs(BcpMessage bcpMessage) :
+        base(bcpMessage)
+    {
+        this.JSON = "";
     }
 }
 

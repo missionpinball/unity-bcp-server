@@ -161,6 +161,20 @@ public class BcpMessage
     }
 
     /// <summary>
+    /// Creates a new set machine variable message.
+    /// </summary>
+    /// <param name="name">The machine variable name.</param>
+    /// <param name="value">The machine variable value.</param>
+    /// <returns></returns>
+    public static BcpMessage SetMachineVariableMessage(string name, string value)
+    {
+        BcpMessage setMachineVarMessage = new BcpMessage("set_machine_var");
+        setMachineVarMessage.Parameters.Add("name", name);
+        setMachineVarMessage.Parameters.Add("value", value);
+        return setMachineVarMessage;
+    }
+
+    /// <summary>
     /// Creates a new message to request monitoring of machine variables.
     /// </summary>
     /// <returns></returns>
