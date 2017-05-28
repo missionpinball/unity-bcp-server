@@ -114,6 +114,8 @@ public class BcpMessageManager : MonoBehaviour
     /// </summary>
 	private object _queueLock = new object();
 
+    private JSONObject _settings = new JSONObject();
+
     /// <summary>
     /// The machine variable store.
     /// </summary>
@@ -168,6 +170,7 @@ public class BcpMessageManager : MonoBehaviour
         // Register message event handlers
         BcpMessageController.OnHello += Hello;
         BcpMessageController.OnGoodbye += Goodbye;
+        BcpMessageController.OnSettings += Settings;
         BcpMessageController.OnMachineVariable += MachineVariable;
         BcpMessageController.OnPlayerVariable += PlayerVariable;
         BcpMessageController.OnModeStop += ModeStop;
@@ -181,6 +184,7 @@ public class BcpMessageManager : MonoBehaviour
         // Unregister event handlers
         BcpMessageController.OnHello -= Hello;
         BcpMessageController.OnGoodbye -= Goodbye;
+        BcpMessageController.OnSettings -= Settings;
         BcpMessageController.OnMachineVariable -= MachineVariable;
         BcpMessageController.OnPlayerVariable -= PlayerVariable;
         BcpMessageController.OnModeStop -= ModeStop;
@@ -252,6 +256,16 @@ public class BcpMessageManager : MonoBehaviour
 	}
 
     /// <summary>
+    /// Gets the value of the specified setting.
+    /// </summary>
+    /// <param name="name">The setting name.</param>
+    /// <returns></returns>
+    public JSONNode GetSetting(string name)
+    {
+        return _settings[name];
+    }
+
+    /// <summary>
     /// Gets the value of the specified machine variable.
     /// </summary>
     /// <param name="name">The machine variable name.</param>
@@ -321,6 +335,16 @@ public class BcpMessageManager : MonoBehaviour
             EditorApplication.isPlaying = false;
 #endif
         Application.Quit();
+    }
+
+    /// <summary>
+    /// Event handler called when a settings event is received. 
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="BcpMessageEventArgs"/> instance containing the event data.</param>
+    public void Settings(object sender, BcpMessageEventArgs e)
+    {
+        _settings = e.BcpMessage.Parameters["settings"].AsObject;
     }
 
     /// <summary>
@@ -523,8 +547,8 @@ public class BcpMessageController
     /// Represents the method that will handle a 'settings' BCP message event.
     /// </summary>
     /// <param name="sender">The sender.</param>
-    /// <param name="e">The <see cref="SettingsMessageEventArgs"/> instance containing the event message data.</param>
-    public delegate void SettingsMessageEventHandler(object sender, SettingsMessageEventArgs e);
+    /// <param name="e">The <see cref="SettingsMessageEventArgs" /> instance containing the event message data.</param>
+    public delegate void SettingsMessageEventHandler(object sender, BcpMessageEventArgs e);
 
     /// <summary>
     /// Represents the method that will handle a 'config' BCP message event.
@@ -1136,7 +1160,7 @@ public class BcpMessageController
             // Call the settings event handlers
             try
             {
-                OnSettings(this, new SettingsMessageEventArgs(message, message.Parameters["json"].AsObject));
+                OnSettings(this, new BcpMessageEventArgs(message));
             }
             catch (Exception e)
             {
@@ -1738,42 +1762,6 @@ public class ResetMessageEventArgs : BcpMessageEventArgs
         base(bcpMessage)
     {
         this.Hard = false;
-    }
-}
-
-
-/// <summary>
-/// Event arguments for the "settings" BCP message.
-/// </summary>
-public class SettingsMessageEventArgs : BcpMessageEventArgs
-{
-    /// <summary>
-    /// Gets or sets the JSON string.
-    /// </summary>
-    /// <value>
-    /// The JSON string.
-    /// </value>
-    public JSONObject JSON { get; set; }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SettingsMessageEventArgs"/> class.
-    /// </summary>
-    /// <param name="bcpMessage">The BCP message.</param>
-    /// <param name="json">JSON string of all settings variables</param>
-    public SettingsMessageEventArgs(BcpMessage bcpMessage, JSONObject json) :
-        base(bcpMessage)
-    {
-        this.JSON = json;
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="SettingsMessageEventArgs"/> class.
-    /// </summary>
-    /// <param name="bcpMessage">The BCP message.</param>
-    public SettingsMessageEventArgs(BcpMessage bcpMessage) :
-        base(bcpMessage)
-    {
-        this.JSON = null;
     }
 }
 
