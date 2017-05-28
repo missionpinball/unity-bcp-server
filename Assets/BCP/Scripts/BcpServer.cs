@@ -281,7 +281,7 @@ public class BcpServer : MonoBehaviour
                     while ((terminationCharacterPos = messageBuffer.ToString().IndexOf("\n")) > -1)
                     {
                         // Convert received data to a BcpMessage
-                        BcpMessage message = BcpMessageManager.StringToBcpMessage(messageBuffer.ToString(0, terminationCharacterPos + 1));
+                        BcpMessage message = BcpMessage.CreateFromRawMessage(messageBuffer.ToString(0, terminationCharacterPos + 1));
                         if (message != null)
                         {
                             BcpLogger.Trace("BcpServer: >>>>>>>>>>>>>> Received \"" + message.Command + "\" message: " + message.ToString());
@@ -359,7 +359,7 @@ public class BcpServer : MonoBehaviour
         {
             NetworkStream clientStream = _client.GetStream();
             byte[] packet;
-            int length = BcpMessageManager.BcpMessageToPacket(message, out packet);
+            int length = message.ToPacket(out packet);
             if (length > 0)
             {
                 clientStream.Write(packet, 0, length);

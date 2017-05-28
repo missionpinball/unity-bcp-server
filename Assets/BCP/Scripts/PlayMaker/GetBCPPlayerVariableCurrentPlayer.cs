@@ -5,32 +5,32 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 using BCP.SimpleJSON;
 
 /// <summary>
-/// Custom PlayMaker action for MPF that sends an Event when an MPF 'machine_variable' command is received
-/// (when the machine variable changes).
+/// Custom PlayMaker action for MPF that retrieves the value of a 'player_variable' for
+/// the current player.
 /// </summary>
 [ActionCategory("BCP")]
-[Tooltip("Retrieves the current value of an MPF machine_variable.")]
-public class GetBCPMachineVariable : FsmStateAction
+[Tooltip("Retrieves the value of an MPF player_variable for the current player.")]
+public class GetBCPPlayerVariableCurrentPlayer : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The name of the MPF machine variable to retrieve")]
-    public string machineVariableName;
+    [Tooltip("The name of the MPF player variable to retrieve")]
+    public string playerVariableName;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The string variable to receive the value of the specified MPF machine variable")]
+    [Tooltip("The string variable to receive the value of the specified MPF player variable")]
     public FsmString stringValue;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The int variable to receive the value of the specified MPF machine variable")]
+    [Tooltip("The int variable to receive the value of the specified MPF player variable")]
     public FsmInt intValue;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The float variable to receive the value of the specified MPF machine variable")]
+    [Tooltip("The float variable to receive the value of the specified MPF player variable")]
     public FsmFloat floatValue;
 
     [UIHint(UIHint.Variable)]
-    [Tooltip("The boolean variable to receive the value of the specified MPF machine variable")]
+    [Tooltip("The boolean variable to receive the value of the specified MPF player variable")]
     public FsmBool boolValue;
 
     /// <summary>
@@ -38,7 +38,7 @@ public class GetBCPMachineVariable : FsmStateAction
     /// </summary>
     public override void Reset()
     {
-        machineVariableName = null;
+        playerVariableName = null;
         stringValue = null;
         intValue = null;
         floatValue = null;
@@ -52,9 +52,9 @@ public class GetBCPMachineVariable : FsmStateAction
     {
         base.OnEnter();
 
-        if (!String.IsNullOrEmpty(machineVariableName))
+        if (!String.IsNullOrEmpty(playerVariableName))
         {
-            JSONNode variable = BcpMessageManager.Instance.GetMachineVariable(machineVariableName);
+            JSONNode variable = BcpMessageManager.Instance.GetPlayerVariableCurrentPlayer(playerVariableName);
             if (variable != null)
             {
                 if (stringValue != null && !stringValue.IsNone) stringValue.Value = variable.Value;

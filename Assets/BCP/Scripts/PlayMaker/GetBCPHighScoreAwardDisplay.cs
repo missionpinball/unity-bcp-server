@@ -9,7 +9,7 @@ using TooltipAttribute = HutongGames.PlayMaker.TooltipAttribute;
 /// </summary>
 [ActionCategory("BCP")]
 [Tooltip("Sends an Event when the special BCP Trigger high_score_award_display command is received.")]
-public class GetBCPHighScoreEnterInitials : FsmStateAction
+public class GetBCPHighScoreAwardDisplay : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
@@ -85,9 +85,9 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
         {
             try
             {
-                award = e.BcpMessage.Parameters["award"];
-                playerName = e.BcpMessage.Parameters["player_name"];
-                value = int.Parse(e.BcpMessage.Parameters["value"].Replace("int:", ""));
+                award = e.BcpMessage.Parameters["award"].Value;
+                playerName = e.BcpMessage.Parameters["player_name"].Value;
+                value = e.BcpMessage.Parameters["value"].AsInt;
                 Fsm.Event(sendEvent);
             }
             catch (Exception ex)

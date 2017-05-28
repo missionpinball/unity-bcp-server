@@ -85,9 +85,9 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
         {
             try
             {
-                award = e.BcpMessage.Parameters["award"];
-                player = int.Parse(e.BcpMessage.Parameters["player_num"].Replace("int:", ""));
-                value = int.Parse(e.BcpMessage.Parameters["value"].Replace("int:", ""));
+                award = e.BcpMessage.Parameters["award"].Value;
+                player = e.BcpMessage.Parameters["player_num"].AsInt;
+                value = e.BcpMessage.Parameters["value"].AsInt;
                 Fsm.Event(sendEvent);
             }
             catch (Exception ex)

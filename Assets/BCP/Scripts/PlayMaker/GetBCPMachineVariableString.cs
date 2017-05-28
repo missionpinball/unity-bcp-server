@@ -10,28 +10,17 @@ using BCP.SimpleJSON;
 /// </summary>
 [ActionCategory("BCP")]
 [Tooltip("Retrieves the current value of an MPF machine_variable.")]
-public class GetBCPMachineVariable : FsmStateAction
+public class GetBCPMachineVariableString : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
     [Tooltip("The name of the MPF machine variable to retrieve")]
     public string machineVariableName;
 
+    [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The string variable to receive the value of the specified MPF machine variable")]
-    public FsmString stringValue;
-
-    [UIHint(UIHint.Variable)]
-    [Tooltip("The int variable to receive the value of the specified MPF machine variable")]
-    public FsmInt intValue;
-
-    [UIHint(UIHint.Variable)]
-    [Tooltip("The float variable to receive the value of the specified MPF machine variable")]
-    public FsmFloat floatValue;
-
-    [UIHint(UIHint.Variable)]
-    [Tooltip("The boolean variable to receive the value of the specified MPF machine variable")]
-    public FsmBool boolValue;
+    [Tooltip("The variable to receive the value of the specified MPF machine variable")]
+    public FsmString value;
 
     /// <summary>
     /// Resets this instance to default values.
@@ -39,10 +28,7 @@ public class GetBCPMachineVariable : FsmStateAction
     public override void Reset()
     {
         machineVariableName = null;
-        stringValue = null;
-        intValue = null;
-        floatValue = null;
-        boolValue = null;
+        value = null;
     }
 
     /// <summary>
@@ -56,12 +42,7 @@ public class GetBCPMachineVariable : FsmStateAction
         {
             JSONNode variable = BcpMessageManager.Instance.GetMachineVariable(machineVariableName);
             if (variable != null)
-            {
-                if (stringValue != null && !stringValue.IsNone) stringValue.Value = variable.Value;
-                if (intValue != null && !intValue.IsNone) intValue.Value = variable.AsInt;
-                if (floatValue != null && !floatValue.IsNone) floatValue.Value = variable.AsFloat;
-                if (boolValue != null && !boolValue.IsNone) boolValue.Value = variable.AsBool;
-            }
+                value.Value = variable.Value;
         }
 
         Finish();

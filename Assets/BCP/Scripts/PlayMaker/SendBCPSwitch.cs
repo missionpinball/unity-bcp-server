@@ -18,7 +18,7 @@ public class SendBCPSwitch : FsmStateAction
     [RequiredField]
     [UIHint(UIHint.Variable)]
     [Tooltip("The state of the switch to send to the MPF pinball controller (ex: '1' or '0')")]
-    public string switchState;
+    public int switchState;
 
     /// <summary>
     /// Resets this instance to default values.
@@ -26,7 +26,7 @@ public class SendBCPSwitch : FsmStateAction
     public override void Reset()
     {
         switchName = null;
-        switchState = null;
+        switchState = 0;
     }
 
     /// <summary>

@@ -7,6 +7,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using BCP.SimpleJSON;
 
 
 /// <summary>
@@ -116,12 +117,17 @@ public class BcpMessageManager : MonoBehaviour
     /// <summary>
     /// The machine variable store.
     /// </summary>
-    private MachineVars _machineVars = new MachineVars();
+    private JSONObject _machineVars = new JSONObject();
 
     /// <summary>
     /// The player variable store.
     /// </summary>
-    private PlayerVars _playerVars = new PlayerVars();
+    private Dictionary<int, JSONObject> _playerVars = new Dictionary<int, JSONObject>();
+
+    /// <summary>
+    /// The current player number.
+    /// </summary>
+    private int _currentPlayer = 0;
 
     /// <summary>
     /// Gets the static singleton object instance.
@@ -163,6 +169,8 @@ public class BcpMessageManager : MonoBehaviour
         BcpMessageController.OnHello += Hello;
         BcpMessageController.OnGoodbye += Goodbye;
         BcpMessageController.OnMachineVariable += MachineVariable;
+        BcpMessageController.OnPlayerVariable += PlayerVariable;
+        BcpMessageController.OnModeStop += ModeStop;
     }
 
     /// <summary>
@@ -174,6 +182,8 @@ public class BcpMessageManager : MonoBehaviour
         BcpMessageController.OnHello -= Hello;
         BcpMessageController.OnGoodbye -= Goodbye;
         BcpMessageController.OnMachineVariable -= MachineVariable;
+        BcpMessageController.OnPlayerVariable -= PlayerVariable;
+        BcpMessageController.OnModeStop -= ModeStop;
     }
 
 
@@ -246,10 +256,38 @@ public class BcpMessageManager : MonoBehaviour
     /// </summary>
     /// <param name="name">The machine variable name.</param>
     /// <returns></returns>
-    public BcpVariable GetMachineVariable(string name)
+    public JSONNode GetMachineVariable(string name)
     {
         return _machineVars[name];
     }
+
+    /// <summary>
+    /// Gets the value of the specified player variable.
+    /// </summary>
+    /// <param name="player">The player number.</param>
+    /// <param name="name">The machine variable name.</param>
+    /// <returns></returns>
+    public JSONNode GetPlayerVariable(int player, string name)
+    {
+        if (!_playerVars.ContainsKey(player))
+            return new JSONNull();
+
+        return _playerVars[player][name];
+    }
+
+    /// <summary>
+    /// Gets the value of the specified machine variable.
+    /// </summary>
+    /// <param name="name">The machine variable name.</param>
+    /// <returns></returns>
+    public JSONNode GetPlayerVariableCurrentPlayer(string name)
+    {
+        if (!_playerVars.ContainsKey(_currentPlayer))
+            return new JSONNull();
+
+        return _playerVars[_currentPlayer][name];
+    }
+
 
     /// <summary>
     /// Event handler called when receiving a BCP 'hello' command.
@@ -293,10 +331,46 @@ public class BcpMessageManager : MonoBehaviour
     /// <param name="e">The <see cref="MachineVariableMessageEventArgs"/> instance containing the event data.</param>
     public void MachineVariable(object sender, MachineVariableMessageEventArgs e)
     {
-        if (_machineVars.Contains(e.Name))
-            _machineVars[e.Name].AssignFromBcpParameterString(e.Value);
-        else
-            _machineVars.Add(e.Name, e.Value);
+        _machineVars[e.Name] = e.Value;
+    }
+
+    /// <summary>
+    /// Event handler called when a player variable event is received. Store new player variable value in the
+    /// player variable store.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerVariableMessageEventArgs"/> instance containing the event data.</param>
+    public void PlayerVariable(object sender, PlayerVariableMessageEventArgs e)
+    {
+        // Create player variable store for the player if it doesn't already exist
+        _playerVars.Add(e.PlayerNum, new JSONObject());
+        if (!_playerVars.ContainsKey(e.PlayerNum))
+            _playerVars.Add(e.PlayerNum, new JSONObject());
+
+        _playerVars[e.PlayerNum][e.Name] = e.Value;
+    }
+
+    /// <summary>
+    /// Event handler called when a mode stops.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="ModeStopMessageEventArgs"/> instance containing the event data.</param>
+    public void ModeStop(object sender, ModeStopMessageEventArgs e)
+    {
+        if (e.Name == "game")
+            _playerVars.Clear();
+
+    }
+
+    /// <summary>
+    /// Event handler called when a players turn starts.
+    /// </summary>
+    /// <param name="sender">The sender.</param>
+    /// <param name="e">The <see cref="PlayerTurnStartMessageEventArgs"/> instance containing the event data.</param>
+    public void PlayerTurnStart(object sender, PlayerTurnStartMessageEventArgs e)
+    {
+        // Update the current player num
+        _currentPlayer = e.PlayerNum;
     }
 
     /// <summary>
@@ -335,93 +409,6 @@ public class BcpMessageManager : MonoBehaviour
             BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(trigger.Trim()));
         }
     }
-
-    /// <summary>
-    /// Converts an unprocessed socket packet to a BCP message.
-    /// </summary>
-    /// <param name="buffer">The packet buffer.</param>
-    /// <param name="length">The buffer length.</param>
-    /// <returns><see cref="BcpMessage"/></returns>
-	public static BcpMessage PacketToBcpMessage(byte[] buffer, int length) {
-		return StringToBcpMessage(Encoding.UTF8.GetString (buffer, 0, length));
-	}
-
-    /// <summary>
-    /// Converts a message string (in URL text format) to a BCP message.
-    /// </summary>
-    /// <param name="rawMessageBuffer">The raw message string/buffer.</param>
-    /// <returns><see cref="BcpMessage"/></returns>
-	public static BcpMessage StringToBcpMessage(string rawMessageBuffer) {
-		BcpMessage bcpMessage = new BcpMessage ();
-		
-		// Remove line feed and carriage return characters
-		rawMessageBuffer = rawMessageBuffer.Replace("\n", String.Empty);
-		rawMessageBuffer = rawMessageBuffer.Replace("\r", String.Empty);
-
-        bcpMessage.RawMessage = rawMessageBuffer;
-        
-        // Message text occurs before the question mark (?)
-		if (rawMessageBuffer.Contains("?")) {
-			int messageDelimiterPos = rawMessageBuffer.IndexOf('?');
-
-            // BCP commands are not case sensitive so we convert to lower case
-            // BCP parameter names are not case sensitive, but parameter values are
-			bcpMessage.Command = WWW.UnEscapeURL(rawMessageBuffer.Substring(0, messageDelimiterPos)).Trim().ToLower();
-			rawMessageBuffer = rawMessageBuffer.Substring(rawMessageBuffer.IndexOf ('?') + 1);
-			
-			foreach (string parameter in Regex.Split(rawMessageBuffer, "&"))
-			{
-				string[] parameterValuePair = Regex.Split(parameter, "=");
-				if (parameterValuePair.Length == 2)
-				{
-					bcpMessage.Parameters.Add(WWW.UnEscapeURL(parameterValuePair[0]).Trim().ToLower(), WWW.UnEscapeURL(parameterValuePair[1]).Trim());
-				}
-				else
-				{
-					// only one key with no value specified in query string
-					bcpMessage.Parameters.Add(WWW.UnEscapeURL(parameterValuePair[0].Trim().ToLower()), string.Empty);
-				}
-			}
-			
-		} 
-        else 
-        {
-			// No parameters in the message, the entire message contains just the message text
-			bcpMessage.Command = WWW.UnEscapeURL(rawMessageBuffer).Trim();
-		}
-		
-		return bcpMessage;
-	}
-
-    /// <summary>
-    /// Converts a BCP message to a socket packet to be sent to a pinball controller.
-    /// </summary>
-    /// <param name="message">The BCP message.</param>
-    /// <param name="packet">The generated packet (by reference).</param>
-    /// <returns>The length of the generated packet</returns>
-	public static int BcpMessageToPacket(BcpMessage message, out byte[] packet) 
-    {
-		StringBuilder parameters = new StringBuilder();
-		foreach (string name in message.Parameters) 
-        {
-			if (parameters.Length > 0)
-				parameters.Append("&");
-			else
-				parameters.Append("?");
-
-			parameters.Append(WWW.EscapeURL(name));
-			string value = message.Parameters[name];
-			if (!String.IsNullOrEmpty(value))
-				parameters.Append("=" + WWW.EscapeURL(value));
-		}
-
-        // Apply message termination character (line feed)
-        parameters.Append("\n");
-        
-        packet = Encoding.UTF8.GetBytes(WWW.EscapeURL(message.Command) + parameters.ToString());
-		return packet.Length;
-	}
-
 
 }
 
@@ -837,12 +824,12 @@ public class BcpMessageController
     {
         try
         {
-            string version = message.Parameters["version"] ?? String.Empty;
+            string version = message.Parameters["version"].Value;
             if (String.IsNullOrEmpty(version))
                 throw new Exception("'hello' message did not contain a valid value for the 'version' parameter");
 
-            string controllerName = message.Parameters["controller_name"] ?? String.Empty;
-            string controllerVersion = message.Parameters["controller_version"] ?? String.Empty;
+            string controllerName = message.Parameters["controller_name"].Value;
+            string controllerVersion = message.Parameters["controller_version"].Value;
 
             // Raise the OnHello event by invoking the delegate. Pass in 
             // the object that initated the event (this) as well as the BcpMessage. 
@@ -891,8 +878,8 @@ public class BcpMessageController
     {
         if (OnBallStart != null)
         {
-            int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
-            int ball = int.Parse(message.Parameters["ball"].Replace("int:", ""));
+            int playerNum = message.Parameters["player_num"].AsInt;
+            int ball = message.Parameters["ball"].AsInt;
             OnBallStart(this, new BallStartMessageEventArgs(message, playerNum, ball));
         }
     }
@@ -916,11 +903,11 @@ public class BcpMessageController
     {
         if (OnModeStart != null)
         {
-            string name = message.Parameters["name"];
+            string name = message.Parameters["name"].Value;
             if (String.IsNullOrEmpty(name))
                 throw new ArgumentException("Message parameter value expected", "name");
 
-            int priority = int.Parse(message.Parameters["priority"].Replace("int:", ""));
+            int priority = message.Parameters["priority"].AsInt;
 
             OnModeStart(this, new ModeStartMessageEventArgs(message, name, priority));
         }
@@ -934,7 +921,7 @@ public class BcpMessageController
     {
         if (OnModeStop != null)
         {
-            string name = message.Parameters["name"];
+            string name = message.Parameters["name"].Value;
             if (String.IsNullOrEmpty(name))
                 throw new ArgumentException("Message parameter value expected", "name");
 
@@ -950,7 +937,7 @@ public class BcpMessageController
     {
         if (OnPlayerAdded != null)
         {
-            int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
+            int playerNum = message.Parameters["player_num"].AsInt;
             OnPlayerAdded(this, new PlayerAddedMessageEventArgs(message, playerNum));
         }
     }
@@ -963,7 +950,7 @@ public class BcpMessageController
     {
         if (OnPlayerTurnStart != null)
         {
-            int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
+            int playerNum = message.Parameters["player_num"].AsInt;
             OnPlayerTurnStart(this, new PlayerTurnStartMessageEventArgs(message, playerNum));
         }
     }
@@ -976,23 +963,15 @@ public class BcpMessageController
     {
         if (OnPlayerVariable != null || OnPlayerScore != null)
         {
-            int playerNum = int.Parse(message.Parameters["player_num"].Replace("int:", ""));
+            int playerNum = message.Parameters["player_num"].AsInt;
 
-            string name = message.Parameters["name"];
+            string name = message.Parameters["name"].Value;
             if (String.IsNullOrEmpty(name))
                 throw new ArgumentException("Message parameter value expected", "name");
 
-            string value = message.Parameters["value"];
-            if (value == null)
-                throw new ArgumentException("Message parameter value expected", "value");
-
-            string previousValue = message.Parameters["prev_value"];
-            if (previousValue == null)
-                throw new ArgumentException("Message parameter value expected", "prev_value");
-
-            string change = message.Parameters["change"];
-            if (change == null)
-                throw new ArgumentException("Message parameter value expected", "change");
+            JSONNode value = message.Parameters["value"];
+            JSONNode previousValue = message.Parameters["prev_value"];
+            JSONNode change = message.Parameters["change"];
 
             if (OnPlayerVariable != null)
                 OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
@@ -1000,9 +979,9 @@ public class BcpMessageController
             // Send an additional special notification for player score (the player_score message has been removed from the BCP spec)
             if (name == "score" && OnPlayerScore != null)
             {
-                int scoreValue = int.Parse(message.Parameters["value"].Replace("int:", ""));
-                int scorePreviousValue = int.Parse(message.Parameters["prev_value"].Replace("int:", ""));
-                int scoreChange = int.Parse(message.Parameters["change"].Replace("int:", ""));
+                int scoreValue = message.Parameters["value"].AsInt;
+                int scorePreviousValue = message.Parameters["prev_value"].AsInt;
+                int scoreChange = message.Parameters["change"].AsInt;
 
                 OnPlayerScore(this, new PlayerScoreMessageEventArgs(message, playerNum, scoreValue, scorePreviousValue, scoreChange));
             }
@@ -1016,13 +995,11 @@ public class BcpMessageController
     /// <param name="message">The "machine_variable" BCP message.</param>
     protected void MachineVariableMessageHandler(BcpMessage message)
     {
-        string name = message.Parameters["name"];
+        string name = message.Parameters["name"].Value;
         if (String.IsNullOrEmpty(name))
             throw new ArgumentException("Message parameter value expected", "name");
 
-        string value = message.Parameters["value"];
-        if (value == null)
-            throw new ArgumentException("Message parameter value expected", "value");
+        JSONNode value = message.Parameters["value"];
 
         if (OnMachineVariable != null)
             OnMachineVariable(this, new MachineVariableMessageEventArgs(message, name, value));
@@ -1044,16 +1021,11 @@ public class BcpMessageController
     {
         if (OnSwitch != null)
         {
-            string name = message.Parameters["name"];
+            string name = message.Parameters["name"].Value;
             if (String.IsNullOrEmpty(name))
                 throw new BcpMessageException("An error occurred while processing a 'switch' message: missing required parameter 'name'.", message);
 
-            if (message.Parameters["state"] == null)
-                throw new BcpMessageException("An error occurred while processing a 'switch' message: missing required parameter 'state'.", message);
-
-            int state;
-            if (!int.TryParse(message.Parameters["state"].Replace("int:", ""), out state))
-                throw new BcpMessageException("An error occurred while processing a 'switch' message: invalid parameter value 'state'.", message);
+            int state = message.Parameters["state"].AsInt;
 
             OnSwitch(this, new SwitchMessageEventArgs(message, name, state));
         }
@@ -1118,13 +1090,11 @@ public class BcpMessageController
     {
         if (OnError != null)
         {
-            string text = message.Parameters["message"];
+            string text = message.Parameters["message"].Value;
             if (String.IsNullOrEmpty(text))
                 throw new ArgumentException("Message parameter value expected", "message");
 
-            string command = "";
-            if (message.Parameters["command"] != null)
-                command = message.Parameters["command"];
+            string command = message.Parameters["command"].Value;
 
             OnError(this, new ErrorMessageEventArgs(message, text, command));
         }
@@ -1142,7 +1112,7 @@ public class BcpMessageController
             // Call the reset event handlers
             try
             {
-                OnReset(this, new ResetMessageEventArgs(message, (message.Parameters["hard"] == null) ? false : bool.Parse(message.Parameters["hard"])));
+                OnReset(this, new ResetMessageEventArgs(message, message.Parameters["hard"].AsBool));
             }
             catch (Exception e)
             {
@@ -1166,7 +1136,7 @@ public class BcpMessageController
             // Call the settings event handlers
             try
             {
-                OnSettings(this, new SettingsMessageEventArgs(message, message.Parameters["json"]));
+                OnSettings(this, new SettingsMessageEventArgs(message, message.Parameters["json"].AsObject));
             }
             catch (Exception e)
             {
@@ -1198,14 +1168,14 @@ public class BcpMessageController
                 if (String.IsNullOrEmpty(action))
                     throw new ArgumentException("Message parameter value expected", "action");
 
-                int ticks = int.Parse(message.Parameters["ticks"].Replace("int:", ""));
-                int ticks_remaining = int.Parse(message.Parameters["ticks_remaining"].Replace("int:", ""));
+                int ticks = message.Parameters["ticks"].AsInt;
+                int ticks_remaining = message.Parameters["ticks_remaining"].AsInt;
 
                 int ticks_added = 0;
                 if (action == "time_added")
-                    ticks_added = int.Parse(message.Parameters["ticks_added"].Replace("int:", ""));
+                    ticks_added = message.Parameters["ticks_added"].AsInt;
                 else if (action == "time_subtracted")
-                    ticks_added = -int.Parse(message.Parameters["ticks_subtracted"].Replace("int:", ""));
+                    ticks_added = -message.Parameters["ticks_subtracted"].AsInt;
 
                 OnTimer(this, new TimerMessageEventArgs(message, name, action, ticks, ticks_remaining, ticks_added));
             }
@@ -1245,9 +1215,8 @@ public class BcpMessageController
         {
             try
             {
-                int warnings = int.Parse(message.Parameters["warnings"].Replace("int:", ""));
-
-                int warningsRemaining = int.Parse(message.Parameters["warnings_remaining"].Replace("int:", ""));
+                int warnings = message.Parameters["warnings"].AsInt;
+                int warningsRemaining = message.Parameters["warnings_remaining"].AsInt;
 
                 OnTiltWarning(this, new TiltWarningMessageEventArgs(message, warnings, warningsRemaining));
             }
@@ -1600,7 +1569,7 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The player variable value.
     /// </value>
-    public string Value { get; set; }
+    public JSONNode Value { get; set; }
 
     /// <summary>
     /// Gets or sets the previous value of the player variable.
@@ -1608,7 +1577,7 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The previous value of the player variable.
     /// </value>
-    public string PreviousValue { get; set; }
+    public JSONNode PreviousValue { get; set; }
 
     /// <summary>
     /// Gets or sets the change in value of the player variable.
@@ -1616,7 +1585,7 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The change in value of the player variable.
     /// </value>
-    public string Change { get; set; }
+    public JSONNode Change { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="PlayerVariableMessageEventArgs"/> class.
@@ -1627,7 +1596,7 @@ public class PlayerVariableMessageEventArgs : BcpMessageEventArgs
     /// <param name="value">The player variable value.</param>
     /// <param name="previousValue">The previous value of the player variable.</param>
     /// <param name="change">The change in value of the player variable.</param>
-    public PlayerVariableMessageEventArgs(BcpMessage bcpMessage, int playerNum, string name, string value, string previousValue, string change) :
+    public PlayerVariableMessageEventArgs(BcpMessage bcpMessage, int playerNum, string name, JSONNode value, JSONNode previousValue, JSONNode change) :
         base(bcpMessage)
     {
         this.PlayerNum = playerNum;
@@ -1658,7 +1627,7 @@ public class MachineVariableMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The machine variable value.
     /// </value>
-    public string Value { get; set; }
+    public JSONNode Value { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="MachineVariableMessageEventArgs"/> class.
@@ -1666,7 +1635,7 @@ public class MachineVariableMessageEventArgs : BcpMessageEventArgs
     /// <param name="bcpMessage">The BCP message.</param>
     /// <param name="name">The player variable name.</param>
     /// <param name="value">The player variable value.</param>
-    public MachineVariableMessageEventArgs(BcpMessage bcpMessage, string name, string value) :
+    public MachineVariableMessageEventArgs(BcpMessage bcpMessage, string name, JSONNode value) :
         base(bcpMessage)
     {
         this.Name = name;
@@ -1784,14 +1753,14 @@ public class SettingsMessageEventArgs : BcpMessageEventArgs
     /// <value>
     /// The JSON string.
     /// </value>
-    public string JSON { get; set; }
+    public JSONObject JSON { get; set; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="SettingsMessageEventArgs"/> class.
     /// </summary>
     /// <param name="bcpMessage">The BCP message.</param>
     /// <param name="json">JSON string of all settings variables</param>
-    public SettingsMessageEventArgs(BcpMessage bcpMessage, string json) :
+    public SettingsMessageEventArgs(BcpMessage bcpMessage, JSONObject json) :
         base(bcpMessage)
     {
         this.JSON = json;
@@ -1804,7 +1773,7 @@ public class SettingsMessageEventArgs : BcpMessageEventArgs
     public SettingsMessageEventArgs(BcpMessage bcpMessage) :
         base(bcpMessage)
     {
-        this.JSON = "";
+        this.JSON = null;
     }
 }
 

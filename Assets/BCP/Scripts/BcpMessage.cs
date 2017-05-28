@@ -2,7 +2,10 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Text;
+using System.Text.RegularExpressions;
+using BCP.SimpleJSON;
 
 /// <summary>
 /// A class that represents a single BCP message and an arbitrary number of parameter name/value pairs.
@@ -23,7 +26,7 @@ public class BcpMessage
     /// <summary>
     /// The collection of message parameters (name/value pairs)
     /// </summary>
-    public NameValueCollection Parameters;
+    public JSONObject Parameters;
 
     /// <summary>
     /// The raw message string
@@ -37,7 +40,7 @@ public class BcpMessage
     {
         Id = String.Empty;
         Command = String.Empty;
-        Parameters = new NameValueCollection();
+        Parameters = new JSONObject();
     }
 
     /// <summary>
@@ -48,7 +51,22 @@ public class BcpMessage
     {
         Id = String.Empty;
         Command = command;
-        Parameters = new NameValueCollection();
+        Parameters = new JSONObject();
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessage"/> class with a single parameter (name/value pair).
+    /// </summary>
+    /// <param name="command">The message command.</param>
+    /// <param name="parameterName">Name of the parameter.</param>
+    /// <param name="parameterValue">The parameter value.</param>
+    public BcpMessage(string command, string parameterName, JSONNode parameterValue)
+    {
+        Id = String.Empty;
+        Command = command;
+        Parameters = new JSONObject();
+
+        Parameters.Add(parameterName, parameterValue);
     }
 
     /// <summary>
@@ -61,9 +79,39 @@ public class BcpMessage
     {
         Id = String.Empty;
         Command = command;
-        Parameters = new NameValueCollection();
+        Parameters = new JSONObject();
 
-        Parameters.Add(parameterName, parameterValue);
+        Parameters.Add(parameterName, new JSONString(parameterValue));
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessage"/> class with a single parameter (name/value pair).
+    /// </summary>
+    /// <param name="command">The message command.</param>
+    /// <param name="parameterName">Name of the parameter.</param>
+    /// <param name="parameterValue">The parameter value.</param>
+    public BcpMessage(string command, string parameterName, int parameterValue)
+    {
+        Id = String.Empty;
+        Command = command;
+        Parameters = new JSONObject();
+
+        Parameters.Add(parameterName, new JSONNumber(parameterValue));
+    }
+
+    /// <summary>
+    /// Initializes a new instance of the <see cref="BcpMessage"/> class with a single parameter (name/value pair).
+    /// </summary>
+    /// <param name="command">The message command.</param>
+    /// <param name="parameterName">Name of the parameter.</param>
+    /// <param name="parameterValue">The parameter value.</param>
+    public BcpMessage(string command, string parameterName, float parameterValue)
+    {
+        Id = String.Empty;
+        Command = command;
+        Parameters = new JSONObject();
+
+        Parameters.Add(parameterName, new JSONNumber(parameterValue));
     }
 
     /// <summary>
@@ -80,22 +128,157 @@ public class BcpMessage
 
         // Build parameter string
         StringBuilder parameters = new StringBuilder();
-        if (!String.IsNullOrEmpty(Id))
-            parameters.Append("?id=" + WWW.EscapeURL(Id));
-
-        foreach (string name in Parameters)
+        foreach (KeyValuePair<string, JSONNode> param in this.Parameters)
         {
-            string value = Parameters[name];
-            string delimiter = (parameters.Length > 0) ? "&" : "?";
-
-            if (String.IsNullOrEmpty(value))
-                parameters.Append(delimiter + WWW.EscapeURL(name));
+            if (parameters.Length > 0)
+                parameters.Append("&");
             else
-                parameters.Append(delimiter + WWW.EscapeURL(name) + "=" + WWW.EscapeURL(value));
+                parameters.Append("?");
+
+            parameters.Append(WWW.EscapeURL(param.Key));
+
+            string value = BcpMessage.ConvertToBcpParameterString(param.Value);
+            if (!String.IsNullOrEmpty(value))
+                parameters.Append("=" + WWW.EscapeURL(value));
         }
 
-        // Return full message string
-        return WWW.EscapeURL(Command) + parameters.ToString() + "\n";
+        // Apply message termination character (line feed)
+        parameters.Append("\n");
+        return WWW.EscapeURL(this.Command) + parameters.ToString();
+    }
+
+    /// <summary>
+    /// Converts a BCP message to a socket packet to be sent to a pinball controller.
+    /// </summary>
+    /// <param name="message">The BCP message.</param>
+    /// <param name="packet">The generated packet (by reference).</param>
+    /// <returns>The length of the generated packet</returns>
+	public int ToPacket(out byte[] packet)
+    {
+        packet = Encoding.UTF8.GetBytes(this.ToString());
+        return packet.Length;
+    }
+
+    /// <summary>
+    /// Converts a parameter value to a BCP parameter string.
+    /// </summary>
+    /// <param name="node">The parameter value node.</param>
+    /// <returns></returns>
+    public static string ConvertToBcpParameterString(JSONNode node)
+    {
+        if (node == null)
+            return null;
+
+        switch (node.Tag)
+        {
+            case JSONNodeType.String:
+                return node.Value;
+
+            case JSONNodeType.Boolean:
+                return node.AsBool ? "bool:True" : "bool:False";
+
+            case JSONNodeType.NullValue:
+                return "NoneType:";
+
+            case JSONNodeType.Number:
+                if ((float)node.AsInt == node.AsFloat)
+                    return "int:" + node.Value;
+                else
+                    return "float:" + node.Value;
+        }
+
+        return null;
+    }
+
+    /// <summary>
+    /// Converts a BCP parameter string to a node.
+    /// </summary>
+    /// <param name="value">The parameter string value.</param>
+    /// <returns></returns>
+    public static JSONNode ConvertBcpParameterStringToNode(string value)
+    {
+        if (value.StartsWith("bool:"))
+            return new JSONBool(value.Substring(5));
+
+        else if (value.StartsWith("NoneType:"))
+            return new JSONNull();
+
+        else if (value.StartsWith("int:"))
+            return new JSONNumber(value.Substring(4));
+
+        else if (value.StartsWith("float:"))
+            return new JSONNumber(value.Substring(6));
+
+        else
+            return new JSONString(value);
+
+    }
+
+    /// <summary>
+    /// Converts a message string (in URL text format) to a BCP message.
+    /// </summary>
+    /// <param name="rawMessage">The raw message buffer string.</param>
+    /// <returns>
+    ///   <see cref="BcpMessage" />
+    /// </returns>
+    public static BcpMessage CreateFromRawMessage(string rawMessage)
+    {
+        BcpMessage bcpMessage = new BcpMessage();
+
+        // Remove line feed and carriage return characters
+        rawMessage = rawMessage.Replace("\n", String.Empty);
+        rawMessage = rawMessage.Replace("\r", String.Empty);
+
+        bcpMessage.RawMessage = rawMessage;
+
+        // Message text occurs before the question mark (?)
+        if (rawMessage.Contains("?"))
+        {
+            int messageDelimiterPos = rawMessage.IndexOf('?');
+
+            // BCP commands are not case sensitive so we convert to lower case
+            // BCP parameter names are not case sensitive, but parameter values are
+            bcpMessage.Command = WWW.UnEscapeURL(rawMessage.Substring(0, messageDelimiterPos)).Trim().ToLower();
+            rawMessage = rawMessage.Substring(rawMessage.IndexOf('?') + 1);
+
+            foreach (string parameter in Regex.Split(rawMessage, "&"))
+            {
+                string[] parameterValuePair = Regex.Split(parameter, "=");
+                string name = WWW.UnEscapeURL(parameterValuePair[0]).Trim().ToLower();
+
+                if (parameterValuePair.Length == 2)
+                {
+                    string value = WWW.UnEscapeURL(parameterValuePair[1]).Trim();
+
+                    // Special handling for "json" parameter
+                    if (name == "json")
+                        bcpMessage.Parameters.Add(name, JSONNode.Parse(value));
+                    else
+                        bcpMessage.Parameters.Add(name, BcpMessage.ConvertBcpParameterStringToNode(value));
+                        
+                }
+                else
+                {
+                    // only one key with no value specified in query string
+                    bcpMessage.Parameters.Add(name, new JSONNull());
+                }
+            }
+
+            // Add JSON-encoded parameters to the message parameters
+            if (bcpMessage.Parameters["json"].IsObject)
+            {
+                foreach (KeyValuePair<string, JSONNode> parameter in bcpMessage.Parameters["json"].AsObject)
+                    bcpMessage.Parameters.Add(parameter.Key, parameter.Value);
+            }
+
+        }
+        else
+        {
+            // No parameters in the message, the entire message contains just the message text
+            bcpMessage.Command = WWW.UnEscapeURL(rawMessage).Trim();
+        }
+
+        return bcpMessage;
     }
 
     /// <summary>
@@ -108,9 +291,9 @@ public class BcpMessage
     public static BcpMessage HelloMessage(string version, string controllerName, string controllerVersion)
     {
         BcpMessage message = new BcpMessage("hello");
-        message.Parameters.Add("version", version);
-        message.Parameters.Add("controller_name", controllerName);
-        message.Parameters.Add("controller_version", controllerVersion);
+        message.Parameters.Add("version", new JSONString(version));
+        message.Parameters.Add("controller_name", new JSONString(controllerName));
+        message.Parameters.Add("controller_version", new JSONString(controllerVersion));
         return message;
     }
 
@@ -153,10 +336,10 @@ public class BcpMessage
     public static BcpMessage ErrorMessage(string message, string command, string id)
     {
         BcpMessage errorMessage = new BcpMessage("error");
-        errorMessage.Parameters.Add("message", message);
-        errorMessage.Parameters.Add("command", command);
+        errorMessage.Parameters.Add("message", new JSONString(message));
+        errorMessage.Parameters.Add("command", new JSONString(command));
         if (!String.IsNullOrEmpty(id))
-            errorMessage.Parameters.Add("id", id);
+            errorMessage.Parameters.Add("id", new JSONString(id));
         return errorMessage;
     }
 
@@ -169,8 +352,36 @@ public class BcpMessage
     public static BcpMessage SetMachineVariableMessage(string name, string value)
     {
         BcpMessage setMachineVarMessage = new BcpMessage("set_machine_var");
-        setMachineVarMessage.Parameters.Add("name", name);
-        setMachineVarMessage.Parameters.Add("value", value);
+        setMachineVarMessage.Parameters.Add("name", new JSONString(name));
+        setMachineVarMessage.Parameters.Add("value", new JSONString(value));
+        return setMachineVarMessage;
+    }
+
+    /// <summary>
+    /// Creates a new set machine variable message.
+    /// </summary>
+    /// <param name="name">The machine variable name.</param>
+    /// <param name="value">The machine variable value.</param>
+    /// <returns></returns>
+    public static BcpMessage SetMachineVariableMessage(string name, int value)
+    {
+        BcpMessage setMachineVarMessage = new BcpMessage("set_machine_var");
+        setMachineVarMessage.Parameters.Add("name", new JSONString(name));
+        setMachineVarMessage.Parameters.Add("value", new JSONNumber(value));
+        return setMachineVarMessage;
+    }
+
+    /// <summary>
+    /// Creates a new set machine variable message.
+    /// </summary>
+    /// <param name="name">The machine variable name.</param>
+    /// <param name="value">The machine variable value.</param>
+    /// <returns></returns>
+    public static BcpMessage SetMachineVariableMessage(string name, float value)
+    {
+        BcpMessage setMachineVarMessage = new BcpMessage("set_machine_var");
+        setMachineVarMessage.Parameters.Add("name", new JSONString(name));
+        setMachineVarMessage.Parameters.Add("value", new JSONNumber(value));
         return setMachineVarMessage;
     }
 
@@ -236,11 +447,11 @@ public class BcpMessage
     /// <param name="name">The name of the switch.</param>
     /// <param name="state">The switch state ("1" for active, "0" for inactive).</param>
     /// <returns></returns>
-    public static BcpMessage SwitchMessage(string name, string state)
+    public static BcpMessage SwitchMessage(string name, int state)
     {
         BcpMessage message = new BcpMessage("switch");
-        message.Parameters.Add("name", name);
-        message.Parameters.Add("state", state);
+        message.Parameters.Add("name", new JSONString(name));
+        message.Parameters.Add("state", new JSONNumber(state));
         return message;
     }
 
@@ -345,3 +556,4 @@ public class BcpMessageException : Exception
         return description.ToString();
     }
 }
+
