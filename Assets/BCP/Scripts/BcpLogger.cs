@@ -15,6 +15,11 @@ public class BcpLogger : MonoBehaviour {
     public string LogFile = "log.txt";
 
     /// <summary>
+    /// Flag indicating whether or not logging is enabled.
+    /// </summary>
+    public bool Enabled = true;
+
+    /// <summary>
     /// Flag indicating whether or not log messages should be echoed to the console.
     /// </summary>
     public bool EchoToConsole = true;
@@ -114,9 +119,10 @@ public class BcpLogger : MonoBehaviour {
   //  [Conditional("DEBUG"), Conditional("PROFILE")]
     public static void Trace(string Message)
     {
-//#if !FINAL
+        //#if !FINAL
         if (BcpLogger.Instance != null)
-            BcpLogger.Instance.Write(Message);
+            if (BcpLogger.Instance.Enabled)
+                BcpLogger.Instance.Write(Message);
         else
             // Fallback if the debugging system hasn't been initialized yet.
             UnityEngine.Debug.Log(Message);
