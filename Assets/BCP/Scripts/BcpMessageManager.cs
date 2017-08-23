@@ -174,6 +174,7 @@ public class BcpMessageManager : MonoBehaviour
         BcpMessageController.OnMachineVariable += MachineVariable;
         BcpMessageController.OnPlayerVariable += PlayerVariable;
         BcpMessageController.OnModeStop += ModeStop;
+        BcpMessageController.OnPlayerTurnStart += PlayerTurnStart;
     }
 
     /// <summary>
@@ -188,6 +189,7 @@ public class BcpMessageManager : MonoBehaviour
         BcpMessageController.OnMachineVariable -= MachineVariable;
         BcpMessageController.OnPlayerVariable -= PlayerVariable;
         BcpMessageController.OnModeStop -= ModeStop;
+        BcpMessageController.OnPlayerTurnStart -= PlayerTurnStart;
     }
 
 
