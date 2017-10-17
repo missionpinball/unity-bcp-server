@@ -197,16 +197,16 @@ public class BcpMessage
     /// <returns></returns>
     public static JSONNode ConvertBcpParameterStringToNode(string value)
     {
-        if (value.StartsWith("bool:"))
+        if (value.ToLower().StartsWith("bool:"))
             return new JSONBool(value.Substring(5));
 
-        else if (value.StartsWith("NoneType:"))
+        else if (value.ToLower().StartsWith("nonetype:"))
             return new JSONNull();
 
-        else if (value.StartsWith("int:"))
+        else if (value.ToLower().StartsWith("int:"))
             return new JSONNumber(value.Substring(4));
 
-        else if (value.StartsWith("float:"))
+        else if (value.ToLower().StartsWith("float:"))
             return new JSONNumber(value.Substring(6));
 
         else
@@ -230,6 +230,7 @@ public class BcpMessage
         rawMessage = rawMessage.Replace("\r", String.Empty);
 
         bcpMessage.RawMessage = rawMessage;
+        rawMessage = WWW.UnEscapeURL(rawMessage);
 
         // Message text occurs before the question mark (?)
         if (rawMessage.Contains("?"))
@@ -238,23 +239,33 @@ public class BcpMessage
 
             // BCP commands are not case sensitive so we convert to lower case
             // BCP parameter names are not case sensitive, but parameter values are
-            bcpMessage.Command = WWW.UnEscapeURL(rawMessage.Substring(0, messageDelimiterPos)).Trim().ToLower();
+            bcpMessage.Command = rawMessage.Substring(0, messageDelimiterPos).Trim().ToLower();
             rawMessage = rawMessage.Substring(rawMessage.IndexOf('?') + 1);
 
             foreach (string parameter in Regex.Split(rawMessage, "&"))
             {
                 string[] parameterValuePair = Regex.Split(parameter, "=");
-                string name = WWW.UnEscapeURL(parameterValuePair[0]).Trim().ToLower();
+                string name = parameterValuePair[0].Trim().ToLower();
 
                 if (parameterValuePair.Length == 2)
                 {
-                    string value = WWW.UnEscapeURL(parameterValuePair[1]).Trim();
+                    string value = parameterValuePair[1].Trim();
 
                     // Special handling for "json" parameter
                     if (name == "json")
-                        bcpMessage.Parameters.Add(name, JSONNode.Parse(value));
+                        try
+                        {
+                            JSONNode node = JSONNode.Parse(value);
+                            bcpMessage.Parameters.Add(name, node);
+                        }
+                        catch
+                        {
+                            bcpMessage.Parameters.Add(name, new JSONNull());
+                        }
                     else
+                    {
                         bcpMessage.Parameters.Add(name, BcpMessage.ConvertBcpParameterStringToNode(value));
+                    }
                         
                 }
                 else
@@ -275,7 +286,7 @@ public class BcpMessage
         else
         {
             // No parameters in the message, the entire message contains just the message text
-            bcpMessage.Command = WWW.UnEscapeURL(rawMessage).Trim();
+            bcpMessage.Command = rawMessage.Trim();
         }
 
         return bcpMessage;
