@@ -280,6 +280,8 @@ public class BcpServer : MonoBehaviour
                     int terminationCharacterPos = 0;
                     while ((terminationCharacterPos = messageBuffer.ToString().IndexOf("\n")) > -1)
                     {
+                        BcpLogger.Trace("BcpServer: >>>>>>>>>>>>>> Received raw message: " + messageBuffer.ToString(0, terminationCharacterPos + 1));
+
                         // Convert received data to a BcpMessage
                         BcpMessage message = BcpMessage.CreateFromRawMessage(messageBuffer.ToString(0, terminationCharacterPos + 1));
                         if (message != null)
