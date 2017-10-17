@@ -65,8 +65,8 @@ public class BcpLogger : MonoBehaviour {
         Singleton = this;
 
 //#if !FINAL
-        // Open the log file to append the new log to it.
-        OutputStream = new StreamWriter(LogFile, true);
+        // Open the log file (overwrite existing file).
+        OutputStream = new StreamWriter(LogFile, false);
 //#endif
     }
 
