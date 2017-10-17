@@ -369,7 +369,6 @@ public class BcpMessageManager : MonoBehaviour
     public void PlayerVariable(object sender, PlayerVariableMessageEventArgs e)
     {
         // Create player variable store for the player if it doesn't already exist
-        _playerVars.Add(e.PlayerNum, new JSONObject());
         if (!_playerVars.ContainsKey(e.PlayerNum))
             _playerVars.Add(e.PlayerNum, new JSONObject());
 
