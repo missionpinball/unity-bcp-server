@@ -30,7 +30,6 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
     [Tooltip("The PlayMaker event to send when the high_score_enter_initials BCP Trigger is received")]
     public FsmEvent sendEvent;
 
-    private string triggerName;
     private bool registered;
 
     /// <summary>
@@ -39,7 +38,6 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
     public override void Reset()
     {
         base.Reset();
-        triggerName = "high_score_enter_initials";
         award = null;
         player = null;
         value = null;
@@ -57,7 +55,7 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
         // Auto-register the trigger name with the pin controller (if necessary)
         if (!registered)
         {
-            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage("high_score_enter_initials"));
             registered = true;
         }
 
@@ -81,7 +79,7 @@ public class GetBCPHighScoreEnterInitials : FsmStateAction
     public void Trigger(object sender, TriggerMessageEventArgs e)
     {
         // Determine if this trigger message is the one we are interested in.  If so, send specified FSM event.
-        if (!String.IsNullOrEmpty(triggerName) && e.Name == triggerName)
+        if (e.Name == "high_score_enter_initials")
         {
             try
             {

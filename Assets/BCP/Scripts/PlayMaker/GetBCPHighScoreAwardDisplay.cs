@@ -30,7 +30,6 @@ public class GetBCPHighScoreAwardDisplay : FsmStateAction
     [Tooltip("The PlayMaker event to send when the high_score_award_display BCP Trigger is received")]
     public FsmEvent sendEvent;
 
-    private string triggerName;
     private bool registered;
 
     /// <summary>
@@ -39,7 +38,6 @@ public class GetBCPHighScoreAwardDisplay : FsmStateAction
     public override void Reset()
     {
         base.Reset();
-        triggerName = "high_score_award_display";
         award = null;
         playerName = null;
         value = null;
@@ -57,7 +55,7 @@ public class GetBCPHighScoreAwardDisplay : FsmStateAction
         // Auto-register the trigger name with the pin controller (if necessary)
         if (!registered)
         {
-            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage(triggerName));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage("high_score_award_display"));
             registered = true;
         }
 
@@ -81,7 +79,7 @@ public class GetBCPHighScoreAwardDisplay : FsmStateAction
     public void Trigger(object sender, TriggerMessageEventArgs e)
     {
         // Determine if this trigger message is the one we are interested in.  If so, send specified FSM event.
-        if (!String.IsNullOrEmpty(triggerName) && e.Name == triggerName)
+        if (e.Name == "high_score_award_display")
         {
             try
             {
