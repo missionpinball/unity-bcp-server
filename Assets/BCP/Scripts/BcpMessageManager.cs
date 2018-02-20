@@ -96,6 +96,9 @@ public class BcpMessageManager : MonoBehaviour
     [Tooltip("Comma-separated list of additional trigger names to register with MPF")]
     public string additionalTriggers = String.Empty;
 
+    [Tooltip("Ignore unknown messages from MPF via BCP. When false, unknown messages will be logged as errors")]
+    public bool ignoreUnknownMessages = true;
+
 
     // Private variables
 
@@ -810,7 +813,8 @@ public class BcpMessageController
         else
         {
             // Unknown message
-            throw new BcpMessageException("Unknown BCP message '" + message.Command + "' (no message handler set).", message);
+            if (!BcpMessageManager.Instance.ignoreUnknownMessages)
+                throw new BcpMessageException("Unknown BCP message '" + message.Command + "' (no message handler set).", message);
         }
 
     }
