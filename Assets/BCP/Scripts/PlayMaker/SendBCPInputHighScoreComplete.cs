@@ -13,8 +13,8 @@ public class SendBCPInputHighScoreComplete : FsmStateAction
 {
     [RequiredField]
     [UIHint(UIHint.Variable)]
-    [Tooltip("The text initials of the high score player to send to MPF")]
-    public string text;
+    [Tooltip("The variable containing text initials of the high score player to send to MPF")]
+    public FsmString text;
 
     /// <summary>
     /// Resets this instance to default values.
@@ -30,7 +30,7 @@ public class SendBCPInputHighScoreComplete : FsmStateAction
     public override void OnEnter()
     {
         BcpMessage message = BcpMessage.TriggerMessage("text_input_high_score_complete");
-        message.Parameters["text"] = new JSONString(text);
+        message.Parameters["text"] = new JSONString(text.Value);
         BcpServer.Instance.Send(message);
 
         Finish();
