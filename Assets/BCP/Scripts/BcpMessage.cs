@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using BCP.SimpleJSON;
+using UnityEngine.Networking;
 
 /// <summary>
 /// A class that represents a single BCP message and an arbitrary number of parameter name/value pairs.
@@ -135,16 +136,16 @@ public class BcpMessage
             else
                 parameters.Append("?");
 
-            parameters.Append(WWW.EscapeURL(param.Key));
+            parameters.Append(UnityWebRequest.EscapeURL(param.Key));
 
             string value = BcpMessage.ConvertToBcpParameterString(param.Value);
             if (!String.IsNullOrEmpty(value))
-                parameters.Append("=" + WWW.EscapeURL(value));
+                parameters.Append("=" + UnityWebRequest.EscapeURL(value));
         }
 
         // Apply message termination character (line feed)
         parameters.Append("\n");
-        return WWW.EscapeURL(this.Command) + parameters.ToString();
+        return UnityWebRequest.EscapeURL(this.Command) + parameters.ToString();
     }
 
     /// <summary>
@@ -230,7 +231,7 @@ public class BcpMessage
         rawMessage = rawMessage.Replace("\r", String.Empty);
 
         bcpMessage.RawMessage = rawMessage;
-        rawMessage = WWW.UnEscapeURL(rawMessage);
+        rawMessage = UnityWebRequest.UnEscapeURL(rawMessage);
 
         // Message text occurs before the question mark (?)
         if (rawMessage.Contains("?"))
