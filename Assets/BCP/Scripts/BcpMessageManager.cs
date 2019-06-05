@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -86,6 +86,9 @@ public class BcpMessageManager : MonoBehaviour
     [Tooltip("Send all core messages (ball, player turn, etc.) from MPF via BCP")]
     public bool coreEvents = true;
 
+    [Tooltip("Send all high score messages from MPF via BCP")]
+    public bool highScores = true;
+
     [Tooltip("Send all tilt messages from MPF via BCP")]
     public bool tilt = true;
 
@@ -98,7 +101,6 @@ public class BcpMessageManager : MonoBehaviour
 
     [Tooltip("Ignore unknown messages from MPF via BCP. When false, unknown messages will be logged as errors")]
     public bool ignoreUnknownMessages = true;
-
 
     // Private variables
 
@@ -411,6 +413,11 @@ public class BcpMessageManager : MonoBehaviour
         if (switches) BcpServer.Instance.Send(BcpMessage.MonitorSwitchMessages());
         if (modes) BcpServer.Instance.Send(BcpMessage.MonitorModeMessages());
         if (coreEvents) BcpServer.Instance.Send(BcpMessage.MonitorCoreMessages());
+        if (highScores)
+        {
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage("high_score_enter_initials"));
+            BcpServer.Instance.Send(BcpMessage.RegisterTriggerMessage("high_score_award_display"));
+        }
         if (tilt)
         {
             BcpMessage.RegisterTriggerMessage("tilt");
@@ -813,8 +820,16 @@ public class BcpMessageController
         else
         {
             // Unknown message
-            if (!BcpMessageManager.Instance.ignoreUnknownMessages)
+            if (BcpMessageManager.Instance.ignoreUnknownMessages)
+            {
+                // Ignore the unknown message, but put a message in the log
+                BcpLogger.Trace("Unknown BCP message '" + message.Command + "' (no message handler set): " + message);
+            }
+            else
+            {
+                // Throw an exception for the unknown message
                 throw new BcpMessageException("Unknown BCP message '" + message.Command + "' (no message handler set).", message);
+            }
         }
 
     }
