@@ -1,4 +1,4 @@
-﻿using UnityEngine;
+using UnityEngine;
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -64,10 +64,9 @@ public class BcpLogger : MonoBehaviour {
 
         Singleton = this;
 
-//#if !FINAL
-        // Open the log file (overwrite existing file).
-        OutputStream = new StreamWriter(LogFile, false);
-//#endif
+        // Open the log file to append the new log to it.
+        if (BcpLogger.Instance.Enabled)
+            OutputStream = new StreamWriter(LogFile, false);
     }
 
 
@@ -76,13 +75,11 @@ public class BcpLogger : MonoBehaviour {
     /// </summary>
     void OnDestroy()
     {
-//#if !FINAL
         if (OutputStream != null)
         {
             OutputStream.Close();
             OutputStream = null;
         }
-//#endif
     }
 
     /// <summary>
@@ -91,7 +88,6 @@ public class BcpLogger : MonoBehaviour {
     /// <param name="message">The message.</param>
     private void Write(string message)
     {
-//#if !FINAL
         if (AddTimeStamp)
         {
             DateTime now = DateTime.Now;
@@ -109,24 +105,21 @@ public class BcpLogger : MonoBehaviour {
         {
             UnityEngine.Debug.Log(message);
         }
-//#endif
     }
 
     /// <summary>
     /// Outputs the specified message to the log file.
     /// </summary>
     /// <param name="Message">The log message.</param>
-  //  [Conditional("DEBUG"), Conditional("PROFILE")]
+    [Conditional("DEBUG")]
     public static void Trace(string Message)
     {
-        //#if !FINAL
         if (BcpLogger.Instance != null)
             if (BcpLogger.Instance.Enabled)
                 BcpLogger.Instance.Write(Message);
         else
             // Fallback if the debugging system hasn't been initialized yet.
             UnityEngine.Debug.Log(Message);
-//#endif
     }
 
 
