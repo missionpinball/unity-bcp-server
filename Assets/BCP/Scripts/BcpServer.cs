@@ -20,7 +20,7 @@ public class BcpServer : MonoBehaviour
     /// <summary>
     /// The BCP Server version
     /// </summary>
-    public const string CONTROLLER_VERSION = "0.33.0";
+    public const string CONTROLLER_VERSION = "0.53.0";
 
     /// <summary>
     /// The BCP Server name
@@ -157,7 +157,8 @@ public class BcpServer : MonoBehaviour
             int windowWidth = 500;
             int windowHeight = 80;
             int windowX = (screenWidth - windowWidth) / 2;
-            int windowY = (screenHeight - windowHeight) / 2;
+            int windowY = 0;
+            // int windowY = (screenHeight - windowHeight) / 2;
 
             // Postion the window in the center of the screen.
             Rect windowRect0 = new Rect(windowX, windowY, windowWidth, windowHeight);
@@ -452,7 +453,7 @@ public class EditorPlayMode
     /// </summary>
 	static EditorPlayMode()
 	{
-		EditorApplication.playmodeStateChanged = OnUnityPlayModeChanged;
+		EditorApplication.playModeStateChanged += OnUnityPlayModeChanged;
 	}
 
     /// <summary>
@@ -500,8 +501,8 @@ public class EditorPlayMode
     /// Called when the Unity Editor play mode is changed.
     /// </summary>
     /// <exception cref="ArgumentOutOfRangeException"></exception>
-	private static void OnUnityPlayModeChanged()
-	{
+	private static void OnUnityPlayModeChanged(PlayModeStateChange state)
+    {
 		var changedState = PlayModeState.Stopped;
 		switch (_currentState)
 		{
