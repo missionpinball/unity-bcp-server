@@ -8,6 +8,7 @@ using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 using BCP.SimpleJSON;
+using UnityEngine.Networking;
 
 
 /// <summary>
@@ -29,7 +30,7 @@ using BCP.SimpleJSON;
 /// public class ModeManager : MonoBehaviour
 /// {
 ///     // Called just after the Unity object is enabled. This happens when a MonoBehaviour instance is created.
-///     void OnEnbale()
+///     void OnEnable()
 ///     {
 ///         // Adds an 'OnModeStart' event handler
 ///         BcpMessageController.OnModeStart += ModeStarted;
@@ -70,7 +71,7 @@ public class BcpMessageManager : MonoBehaviour
     /// </summary>
     public int messageQueueSize = 100;
 
-    [Header("Registered BCP Messsages")]
+    [Header("Registered BCP Messages")]
     [Tooltip("Send all machine variables and their changes from MPF via BCP")]
     public bool machineVariables = true;
 
@@ -143,7 +144,6 @@ public class BcpMessageManager : MonoBehaviour
     /// The instance.
     /// </value>
 	public static BcpMessageManager Instance { get; private set; }
-
     
     /// <summary>
     /// Called when the script instance is being loaded.
@@ -164,7 +164,8 @@ public class BcpMessageManager : MonoBehaviour
     /// Sets up internal message handler callback functions for processing received BCP messages.  Also initiates the 
     /// socket communications between the pinball controller and media controller server (Unity).
     /// </remarks>
-	void Start() {
+	void Start()
+    {
 		// Setup message handler callback functions for processing received messages
         BcpLogger.Trace("Setting up message handler callback functions");
 
@@ -197,7 +198,6 @@ public class BcpMessageManager : MonoBehaviour
         BcpMessageController.OnPlayerTurnStart -= PlayerTurnStart;
     }
 
-
     /// <summary>
     /// Processes any BCP messages that have been received and queued for processing.
     /// </summary>
@@ -205,8 +205,8 @@ public class BcpMessageManager : MonoBehaviour
     /// Update is called every frame, if the MonoBehaviour is enabled.  This function runs in the main Unity thread and 
     /// must access the received message queue in a thread-safe manner.
     /// </remarks>
-    void Update () {
-
+    void Update ()
+    {
 		BcpMessage currentMessage = null;
         bool checkMessages = true;
 
@@ -236,7 +236,7 @@ public class BcpMessageManager : MonoBehaviour
             {
                 try
                 {
-                    _messageController.ProcessMessage(currentMessage);
+                    _messageController.ProcessMessage(currentMessage, ignoreUnknownMessages);
                 }
                 catch (Exception ex)
                 {
@@ -254,7 +254,8 @@ public class BcpMessageManager : MonoBehaviour
     /// <remarks>
     /// This function may be accessed from several different threads and therefore must use thread-safe access methods.
     /// </remarks>
-	public void AddMessageToQueue(BcpMessage message) {
+	public void AddMessageToQueue(BcpMessage message)
+    {
 		lock (_queueLock) {
 			if (_messageQueue.Count < messageQueueSize) {
 				_messageQueue.Enqueue(message);
@@ -291,7 +292,7 @@ public class BcpMessageManager : MonoBehaviour
     public JSONNode GetPlayerVariable(int player, string name)
     {
         if (!_playerVars.ContainsKey(player))
-            return new JSONNull();
+            return JSONNull.CreateOrGet();
 
         return _playerVars[player][name];
     }
@@ -304,11 +305,10 @@ public class BcpMessageManager : MonoBehaviour
     public JSONNode GetPlayerVariableCurrentPlayer(string name)
     {
         if (!_playerVars.ContainsKey(_currentPlayer))
-            return new JSONNull();
+            return JSONNull.CreateOrGet();
 
         return _playerVars[_currentPlayer][name];
     }
-
 
     /// <summary>
     /// Event handler called when receiving a BCP 'hello' command.
@@ -406,6 +406,9 @@ public class BcpMessageManager : MonoBehaviour
     /// <summary>
     /// Registers the events in MPF that will be sent via BCP.
     /// </summary>
+    /// <remarks>
+    /// Without registering messages with MPF, no message traffic will be sent to the Unity BCP server.
+    /// </remarks>
     protected void RegisterMonitorsAndTriggers()
     {
         if (machineVariables) BcpServer.Instance.Send(BcpMessage.MonitorMachineVarsMessage());
@@ -802,7 +805,9 @@ public class BcpMessageController
     /// Processes a BCP message.
     /// </summary>
     /// <param name="message">The BCP message to process.</param>
-    public void ProcessMessage(BcpMessage message)
+    /// <param name="ignoreUnknownMessages">if set to <c>true</c> ignore unknown messages (log message only).</param>
+    /// <exception cref="BcpMessageException">Unknown BCP message '" + message.Command + "' (no message handler set).</exception>
+    public void ProcessMessage(BcpMessage message, bool ignoreUnknownMessages=true)
     {
         // Process message (call message handler callback functions)
         BcpLogger.Trace("Processing \"" + message.Command + "\" message");
@@ -820,7 +825,7 @@ public class BcpMessageController
         else
         {
             // Unknown message
-            if (BcpMessageManager.Instance.ignoreUnknownMessages)
+            if (ignoreUnknownMessages)
             {
                 // Ignore the unknown message, but put a message in the log
                 BcpLogger.Trace("Unknown BCP message '" + message.Command + "' (no message handler set): " + message);
@@ -833,7 +838,6 @@ public class BcpMessageController
         }
 
     }
-
 
     /************************************************************************************
 	 * Internal BCP Message Handler functions (called when a specific message type is received)
@@ -1069,6 +1073,9 @@ public class BcpMessageController
             if (String.IsNullOrEmpty(name))
                 throw new BcpMessageException("An error occurred while processing a 'switch' message: missing required parameter 'name'.", message);
 
+            if (!message.Parameters["state"].IsNumber)
+                throw new BcpMessageException("An error occurred while processing a 'switch' message: missing or invalid required parameter 'state'.", message);
+
             int state = message.Parameters["state"].AsInt;
 
             OnSwitch(this, new SwitchMessageEventArgs(message, name, state));
@@ -1165,7 +1172,8 @@ public class BcpMessageController
         }
 
         // A BCP reset message must be responded to with a reset complete
-        BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
+        if (BcpServer.Instance != null)
+            BcpServer.Instance.Send(BcpMessage.ResetCompleteMessage());
     }
 
     /// <summary>
