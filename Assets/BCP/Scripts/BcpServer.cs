@@ -160,7 +160,7 @@ public class BcpServer : MonoBehaviour
             int windowY = 0;
             // int windowY = (screenHeight - windowHeight) / 2;
 
-            // Postion the window in the center of the screen.
+            // Position the window in the center of the screen.
             Rect windowRect0 = new Rect(windowX, windowY, windowWidth, windowHeight);
 
             // Display waiting for connection popup window
@@ -170,10 +170,12 @@ public class BcpServer : MonoBehaviour
     }
 
 #if UNITY_EDITOR
-	/// <summary>
-	/// Event handler called when Editor play mode changes (only applies when running in the Editor).
-	/// </summary>
-	private static void OnPlayModeChanged(PlayModeState currentMode, PlayModeState changedMode)
+    /// <summary>
+    /// Event handler called when Editor play mode changes (only applies when running in the Editor).
+    /// </summary>
+    /// <param name="currentMode">The current mode.</param>
+    /// <param name="changedMode">The changed mode.</param>
+    private static void OnPlayModeChanged(PlayModeState currentMode, PlayModeState changedMode)
 	{
 		// Shut down the server if the editor is stopping (avoid hanging worker threads and locking up Unity)
 		if (changedMode == PlayModeState.Stopped) {
@@ -201,9 +203,9 @@ public class BcpServer : MonoBehaviour
         GUILayout.EndVertical();
     }
 
-    
+
     /// <summary>
-    /// Listens for a connection from MPF pin contoller client.
+    /// Listens for a connection from MPF pin controller client.
     /// </summary>
     /// <remarks>
     /// This function runs in its own thread.
@@ -331,7 +333,7 @@ public class BcpServer : MonoBehaviour
             if (ClientConnected)
 			{
 				// Send goodbye message to connected client
-				Send (BcpMessage.GoodbyeMessage());
+				Send(BcpMessage.GoodbyeMessage());
                 _client.Close();
 			}
 
