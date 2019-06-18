@@ -7,8 +7,8 @@ using System.IO;
 /// <summary>
 /// This singleton class provides a timestamped log file that will only be available in debug builds.
 /// </summary>
-public class BcpLogger : MonoBehaviour {
-
+public class BcpLogger : MonoBehaviour
+{
     /// <summary>
     /// The log file name.
     /// </summary>
@@ -118,7 +118,7 @@ public class BcpLogger : MonoBehaviour {
             if (BcpLogger.Instance.Enabled)
                 BcpLogger.Instance.Write(Message);
         else
-            // Fallback if the debugging system hasn't been initialized yet.
+            // Fall back if the debugging system hasn't been initialized yet.
             UnityEngine.Debug.Log(Message);
     }
 
