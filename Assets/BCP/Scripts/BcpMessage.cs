@@ -202,7 +202,7 @@ public class BcpMessage
             return new JSONBool(value.Substring(5));
 
         else if (value.ToLower().StartsWith("nonetype:"))
-            return new JSONNull();
+            return JSONNull.CreateOrGet();
 
         else if (value.ToLower().StartsWith("int:"))
             return new JSONNumber(value.Substring(4));
@@ -241,7 +241,7 @@ public class BcpMessage
             // BCP commands are not case sensitive so we convert to lower case
             // BCP parameter names are not case sensitive, but parameter values are
             bcpMessage.Command = rawMessage.Substring(0, messageDelimiterPos).Trim().ToLower();
-            rawMessage = rawMessage.Substring(rawMessage.IndexOf('?') + 1);
+            rawMessage = rawMessage.Substring(messageDelimiterPos + 1);
 
             foreach (string parameter in Regex.Split(rawMessage, "&"))
             {
@@ -261,7 +261,7 @@ public class BcpMessage
                         }
                         catch
                         {
-                            bcpMessage.Parameters.Add(name, new JSONNull());
+                            bcpMessage.Parameters.Add(name, JSONNull.CreateOrGet());
                         }
                     else
                     {
@@ -272,7 +272,7 @@ public class BcpMessage
                 else
                 {
                     // only one key with no value specified in query string
-                    bcpMessage.Parameters.Add(name, new JSONNull());
+                    bcpMessage.Parameters.Add(name, JSONNull.CreateOrGet());
                 }
             }
 
