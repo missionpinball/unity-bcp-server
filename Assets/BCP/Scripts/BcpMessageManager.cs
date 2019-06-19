@@ -813,8 +813,7 @@ public class BcpMessageController
         BcpLogger.Trace("Processing \"" + message.Command + "\" message");
 
         // First, call all message handler function (if one is set)
-        if (_allMessageCallback != null)
-            _allMessageCallback(message);
+        _allMessageCallback?.Invoke(message);
 
         // Call specific message handler function
         BcpMessageCallback messageCallback = _messageHandlerCallbackTable[message.Command] as BcpMessageCallback;
@@ -880,7 +879,7 @@ public class BcpMessageController
             string controllerVersion = message.Parameters["controller_version"].Value;
 
             // Raise the OnHello event by invoking the delegate. Pass in 
-            // the object that initated the event (this) as well as the BcpMessage. 
+            // the object that initiated the event (this) as well as the BcpMessage. 
             if (OnHello != null)
             {
                 OnHello(this, new HelloMessageEventArgs(message, version, controllerName, controllerVersion));
@@ -902,7 +901,7 @@ public class BcpMessageController
     protected void GoodbyeMessageHandler(BcpMessage message)
     {
         // Raise the OnGoodbye event by invoking the delegate. Pass in 
-        // the object that initated the event (this) as well as the BcpMessage. 
+        // the object that initiated the event (this) as well as the BcpMessage. 
         if (OnGoodbye != null)
         {
             try
@@ -939,8 +938,7 @@ public class BcpMessageController
     /// <param name="message">The "ball_end" BCP message.</param>
     protected void BallEndMessageHandler(BcpMessage message)
     {
-        if (OnBallEnd != null)
-            OnBallEnd(this, new BcpMessageEventArgs(message));
+        OnBallEnd?.Invoke(this, new BcpMessageEventArgs(message));
     }
 
     /// <summary>
@@ -1021,8 +1019,7 @@ public class BcpMessageController
             JSONNode previousValue = message.Parameters["prev_value"];
             JSONNode change = message.Parameters["change"];
 
-            if (OnPlayerVariable != null)
-                OnPlayerVariable(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
+            OnPlayerVariable?.Invoke(this, new PlayerVariableMessageEventArgs(message, playerNum, name, value, previousValue, change));
 
             // Send an additional special notification for player score (the player_score message has been removed from the BCP spec)
             if (name == "score" && OnPlayerScore != null)
@@ -1043,14 +1040,16 @@ public class BcpMessageController
     /// <param name="message">The "machine_variable" BCP message.</param>
     protected void MachineVariableMessageHandler(BcpMessage message)
     {
-        string name = message.Parameters["name"].Value;
-        if (String.IsNullOrEmpty(name))
-            throw new ArgumentException("Message parameter value expected", "name");
-
-        JSONNode value = message.Parameters["value"];
-
         if (OnMachineVariable != null)
+        {
+            string name = message.Parameters["name"].Value;
+            if (String.IsNullOrEmpty(name))
+                throw new ArgumentException("Message parameter value expected", "name");
+
+            JSONNode value = message.Parameters["value"];
+
             OnMachineVariable(this, new MachineVariableMessageEventArgs(message, name, value));
+        }
 
     }
 
@@ -1110,27 +1109,24 @@ public class BcpMessageController
         // Tilt messages
         if (name == "tilt")
         {
-            if (OnTilt != null)
-                OnTilt(this, new BcpMessageEventArgs(new BcpMessage("tilt")));
+            OnTilt?.Invoke(this, new BcpMessageEventArgs(new BcpMessage("tilt")));
             return;
         }
         else if (name == "slam_tilt")
         {
-            if (OnSlamTilt != null)
-                OnSlamTilt(this, new BcpMessageEventArgs(new BcpMessage("slam_tilt")));
+            OnSlamTilt?.Invoke(this, new BcpMessageEventArgs(new BcpMessage("slam_tilt")));
             return;
         }
-        else if (name == "tilt_warning" && OnTiltWarning != null)
+        else if (name == "tilt_warning")
         {
             int warnings = int.Parse(message.Parameters["warnings"]);
             int warnings_remaining = int.Parse(message.Parameters["warnings_remaining"]);
-            OnTiltWarning(this, new TiltWarningMessageEventArgs(new BcpMessage("tilt_warning"), warnings, warnings_remaining));
+            OnTiltWarning?.Invoke(this, new TiltWarningMessageEventArgs(new BcpMessage("tilt_warning"), warnings, warnings_remaining));
             return;
         }
 
         // Now call trigger message handlers
-        if (OnTrigger != null)
-            OnTrigger(this, new TriggerMessageEventArgs(message, name));
+        OnTrigger?.Invoke(this, new TriggerMessageEventArgs(message, name));
     }
 
     /// <summary>
